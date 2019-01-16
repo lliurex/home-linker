@@ -1,0 +1,137 @@
+home-linker (0.65) xenial; urgency=high
+
+  * Fixing umount in /usr/sbin/home-linker to fix multiple binds in thin clients
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Wed, 31 May 2017 14:52:23 +0200
+
+home-linker (0.64) xenial; urgency=high
+
+  * Adding lazy option to umount
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Fri, 26 May 2017 11:58:09 +0200
+
+home-linker (0.63) xenial; urgency=high
+
+  * Removing tree in log
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Fri, 12 May 2017 09:57:27 +0200
+
+home-linker (0.62) xenial; urgency=high
+
+  * fix bug in Wellcome echo  
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Thu, 30 Mar 2017 15:05:59 +0200
+
+home-linker (0.61) xenial; urgency=high
+
+  * Fixed Desktop mount
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Fri, 11 Nov 2016 13:00:00 +0100
+
+home-linker (0.60) xenial; urgency=high
+
+  * Fix bug in umount home-linker 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Wed, 09 Nov 2016 13:04:48 +0100
+
+home-linker (0.59) xenial; urgency=high
+
+  * Eliminate dependence home-linker-sudoers in ldm-client 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Tue, 08 Nov 2016 12:44:28 +0100
+
+home-linker (0.58) xenial; urgency=high
+
+  *  Change grep to umount mounted directories in login user
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Tue, 08 Nov 2016 12:33:16 +0100
+
+home-linker (0.57) xenial; urgency=high
+
+  * Deleting obsolete directories in bind for other languages 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 31 Oct 2016 17:37:01 +0100
+
+home-linker (0.56) xenial; urgency=high
+
+  * bug in translator
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 31 Oct 2016 16:32:50 +0100
+
+home-linker (0.55) xenial; urgency=high
+
+  * Add translation for data alum
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 31 Oct 2016 16:08:06 +0100
+
+home-linker (0.54) xenial; urgency=high
+
+  * Fixing translations
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 31 Oct 2016 14:55:54 +0100
+
+home-linker (0.53) xenial; urgency=high
+
+  * diversions modify 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 31 Oct 2016 13:41:57 +0100
+
+home-linker (0.52) xenial; urgency=high
+
+  * diversions modified
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 31 Oct 2016 13:04:22 +0100
+
+home-linker (0.51) xenial; urgency=high
+
+  * Change package for diversion 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Fri, 28 Oct 2016 13:21:39 +0200
+
+home-linker (0.44) xenial; urgency=high
+
+  * New files with prides and replaces in debian/control
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Thu, 27 Oct 2016 13:56:24 +0200
+
+home-linker (0.43) xenial; urgency=high
+
+  * Adding trasnlations to xdg_translator for Group_Share
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 10 Oct 2016 17:08:25 +0200
+
+home-linker (0.42) xenial; urgency=high
+
+  * bug in route to file lightdm
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 10 Oct 2016 16:34:41 +0200
+
+home-linker (0.41) xenial; urgency=high
+
+  * Modify files
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Wed, 05 Oct 2016 10:03:43 +0200
+
+home-linker (0.4) xenial; urgency=high
+
+  * Adding new files for some scenaries 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Thu, 29 Sep 2016 12:25:43 +0200
+
+home-linker (0.3) xenial; urgency=high
+
+  * Changing variable to home after login 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 26 Sep 2016 17:32:57 +0200
+
+home-linker (0.2) xenial; urgency=high
+
+  * Adding new files in /usr/bin to home-linker to be independent 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 19 Sep 2016 13:30:43 +0200
+
+home-linker (0.1) xenial; urgency=high
+
+  * Initial release.
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Thu, 15 Sep 2016 10:20:15 +0200
