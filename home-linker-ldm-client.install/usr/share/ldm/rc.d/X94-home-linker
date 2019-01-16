@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+# The following is a script to set up local apps support on LTSP through LDM
+#
+
+if ! boolean_is_true "$LTSP_FATCLIENT"; then
+	ssh -S ${LDM_SOCKET} ${LDM_SERVER} sudo /usr/sbin/home-linker ${LDM_USERNAME}
+else
+	/usr/sbin/home-linker ${LDM_USERNAME} ${LDM_HOME}
+fi
+

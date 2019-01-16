@@ -1,0 +1,26 @@
+#!/usr/bin/env python
+import xmlrpclib as x
+import sys
+import os
+if len(sys.argv) != 4:
+	sys.exit(0)
+home = sys.argv[1]
+group = sys.argv[2]
+user = sys.argv[3]
+s = x.ServerProxy('https://server:9779')
+list_acl = s.get_acl_group_filtered('','NetFoldersManager',group)
+try:
+	apply_nobody_nogroup = False
+	if len(list_acl) > 0:
+		list_acl.append(['-m','u:'+user+':rwx'])
+		apply_nobody_nogroup = True
+	for x in list_acl:
+		os.system('setfacl ' + ' '.join(x) + ' "' + home + '"')
+		
+	# Apply --- to others to every single home
+	os.system('setfacl -m o:--- "%s"'%home)
+	
+	if apply_nobody_nogroup:
+		os.system('chown ' + user+':nogroup "' + home + '"')
+except Exception as e:
+	pass

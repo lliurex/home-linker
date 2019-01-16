@@ -1,0 +1,13 @@
+#!/bin/bash
+if [ -n "$1" ]; then
+        USER="$1"
+fi
+
+if [ "$USER" = "" ]; then
+	exit 0
+fi
+
+x=$(who | awk "/$USER/"'{print $1}')
+if [ -z "$x" ]; then
+	mount | awk -F ' on ' "/$USER/"'{print $2 }' | awk -F ' type ' '{ cmd = "umount -l " $1; system( cmd ) }'
+fi

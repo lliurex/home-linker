@@ -1,0 +1,11 @@
+#
+#	Logrotate fragment for home-linker.
+#
+/var/log/home-linker.log {
+	daily
+	compress
+	delaycompress
+	rotate 15
+	missingok
+	nocreate
+}

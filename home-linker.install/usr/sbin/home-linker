@@ -1,0 +1,340 @@
+#!/bin/sh
+set -x 
+
+
+echo 
+
+LOG="/var/log/home_linker.log"
+echo "" > "$LOG"
+echo "******************************" >> "$LOG"
+echo "WELLCOME TO HOME-LINKER LOG" >> "$LOG"
+echo "" >> "$LOG"
+date >> "$LOG"
+echo "******************************" >> "$LOG"
+echo "" >> "$LOG"
+echo "Username -> $1" >> "$LOG"
+
+trim() {
+    local var="$*"
+    var="${var#"${var%%[![:space:]]*}"}"   # remove leading whitespace characters
+    var="${var%"${var##*[![:space:]]}"}"   # remove trailing whitespace characters
+    echo -n "$var"
+}
+
+#SET VARIABLES FOR THE ENVIRONMENT
+
+#GET VARIABLES
+USER=$1
+HL_USER=$(trim "$USER")
+
+if [ ! -z "$2" ]; then
+		HL_HOME="$2"	
+	else
+		NHOME=$(python -c "
+tmp='$HOME'.split('/')
+last=tmp[-1]
+print '/'.join(tmp[:-1])+'/'+last.strip()
+")
+
+		HL_HOME="$NHOME"
+fi
+
+# From this file get $LANG
+{ [ -r "$HL_HOME/.pam_environment" ] && . "$HL_HOME/.pam_environment" ;} || { [ -r "/etc/default/locale" ] && . "/etc/default/locale" ;} || LANG="en"
+
+if [ ! -z "$LDM_LANGUAGE" ]; then
+		AUX_LANG="$LDM_LANGUAGE"	
+	else
+		AUX_LANG="$LANG"
+fi
+
+
+
+
+
+
+# Get Usernames
+GRP_USER="$(id -ng $HL_USER)"
+
+# Source for user-dirs if it exists
+USER_DIRS="$HL_HOME/.config/user-dirs.dirs"
+[ ! -r $USER_DIRS ] || . $USER_DIRS
+
+# Source the token file if it exists
+LAST_LOGIN_DIRECTORIES="$HL_HOME/.config/user-dirs.created"
+[ ! -r "$LAST_LOGIN_DIRECTORIES" ] || . "$LAST_LOGIN_DIRECTORIES"
+
+#Temp file with new user-dirs
+[ -d "$HL_HOME" ] || { mkdir -p "$HL_HOME" ; chown $HL_USER:$GRP_USER "$HL_HOME" ;}
+[ -d "$HL_HOME/.config" ] || { mkdir -p "$HL_HOME/.config" ; chown $HL_USER:$GRP_USER "$HL_HOME/.config" ;}
+TEMP_NEW_USER_DIRS="$HL_HOME/.config/aux-user-dirs.create"
+:> $TEMP_NEW_USER_DIRS
+
+#set Acl on Home to be more restricted 
+get_acl_from_server "$HL_HOME" "$GRP_USER" $HL_USER
+
+# Download directory actions
+DOWNLOADS_LOCALE="$(/usr/bin/xdg_translator "$AUX_LANG" "Downloads")"
+DESKTOP_LOCALE="$(/usr/bin/xdg_translator "$AUX_LANG"  "Desktop")"
+DOCUMENTS_LOCALE="$(/usr/bin/xdg_translator "$AUX_LANG"  "Documents")"
+SHARE_LOCALE="$(/usr/bin/xdg_translator "$AUX_LANG"  "Share")"
+SHARETEACHERS_LOCALE="$(/usr/bin/xdg_translator "$AUX_LANG"  "Teachers_Share")"
+GROUPSSHARE_LOCALE="$(/usr/bin/xdg_translator "$AUX_LANG"  "Groups_Share")"
+DATA_ALUM="$(/usr/bin/xdg_translator "$AUX_LANG"  "Data_Alum")"
+
+
+[ ! -z $DESKTOP_LOCALE ] || DESKTOP_LOCALE="Desktop"
+[ ! -z $DOWNLOADS_LOCALE ] || DOWNLOADS_LOCALE="Downloads"
+[ ! -z $DOCUMENTS_LOCALE ] || DOCUMENTS_LOCALE="Documents"
+[ ! -z $SHARE_LOCALE ] || SHARE_LOCALE="Share"
+[ ! -z $SHARETEACHERS_LOCALE ] || SHARETEACHERS_LOCALE="Teachers_Share"
+[ ! -z $GROUPSSHARE_LOCALE ] || GROUPSSHARE_LOCALE="Groups_Share"
+[ ! -z $DATA_ALUM ] || DATA_ALUM="Data_Alumn"
+
+
+
+
+# Umount directories mounted previously
+NEEDLE="${DESKTOP_LOCALE}|${DOCUMENTS_LOCALE}|${SHARE_LOCALE}|${SHARETEACHERS_LOCALE}|${GROUPSSHARE_LOCALE}|${DATA_ALUM}"
+LIST_BIND_MOUNTED="$(mount | awk -F ' on ' "/$USER/"'{print $2 }' | grep -E $NEEDLE)"
+echo "" >> "$LOG"
+echo "     LIST MOUNTED POINTS AT LOGIN" >> "$LOG"
+echo "---------------------------------------" >> "$LOG"
+echo "$LIST_BIND_MOUNTED" >> "$LOG"
+echo "_______________________________________________________" >> "$LOG"
+echo "" >> "$LOG"
+for MOUNT_POINT in $LIST_BIND_MOUNTED; do
+    rc=0
+    $(echo $MOUNT_POINT | grep -q $HL_HOME) || rc=1
+    echo "" >> "$LOG"
+    echo "TESTING THIS MOUNT_POINT: $MOUNT_POINT" >> "$LOG"
+    echo "UMOUNT POINT IF RC!=0, VALOR ACTUALLY FOR RC IS $rc" >> "$LOG"
+    if [ $rc -eq 0 ]; then
+	echo "umount point: $MOUNT_POINT" >> "$LOG"
+        umount -l $MOUNT_POINT || true
+    fi
+    echo "_______________________________________________________" >> "$LOG"
+done
+
+
+if [ "$TOKEN_DESKTOP" != "$DESKTOP_LOCALE" ]; then
+    if [ ! -z "$TOKEN_DESKTOP" -a -e $HL_HOME/${TOKEN_DESKTOP} ]; then 
+        mv $HL_HOME/${TOKEN_DESKTOP} $HL_HOME/${DESKTOP_LOCALE}
+    else
+        mkdir $HL_HOME/${DESKTOP_LOCALE} || true
+    fi
+fi
+
+if [ -L "$HL_HOME/${DESKTOP_LOCALE}" ]; then
+    rm -rf "$HL_HOME/${DESKTOP_LOCALE}"
+    mkdir $HL_HOME/${DESKTOP_LOCALE}
+fi
+
+chown $HL_USER:$GRP_USER $HL_HOME/${DESKTOP_LOCALE}
+echo "TOKEN_DESKTOP=\"$DESKTOP_LOCALE\"" >> $TEMP_NEW_USER_DIRS
+
+
+if [ "$TOKEN_DOCUMENTS" != "$DOCUMENTS_LOCALE" ]; then
+    if [ ! -z "$TOKEN_DOCUMENTS" -a -e $HL_HOME/${TOKEN_DOCUMENTS} ]; then 
+        mv $HL_HOME/${TOKEN_DOCUMENTS} $HL_HOME/${DOCUMENTS_LOCALE}
+    else
+        mkdir $HL_HOME/${DOCUMENTS_LOCALE} || true
+    fi
+fi
+
+if [ -L "$HL_HOME/${DOCUMENTS_LOCALE}" ]; then
+    rm -rf "$HL_HOME/${DOCUMENTS_LOCALE}"
+    mkdir $HL_HOME/${DOCUMENTS_LOCALE}
+fi
+
+
+chown $HL_USER:$GRP_USER $HL_HOME/${DOCUMENTS_LOCALE}
+echo "TOKEN_DOCUMENTS=\"$DOCUMENTS_LOCALE\"" >> $TEMP_NEW_USER_DIRS
+
+if [ "$TOKEN_DOWNLOADS" != "$DOWNLOADS_LOCALE" ]; then
+    if [ ! -z "$TOKEN_DOWNLOADS" -a -e $HL_HOME/${TOKEN_DOWNLOADS} ]; then 
+        mv $HL_HOME/${TOKEN_DOWNLOADS} $HL_HOME/${DOWNLOADS_LOCALE}
+    else
+        mkdir $HL_HOME/${DOWNLOADS_LOCALE} || true
+    fi
+fi
+
+if [ -L "$HL_HOME/${DOWNLOADS_LOCALE}" ]; then
+    rm -rf "$HL_HOME/${DOWNLOADS_LOCALE}"
+    mkdir $HL_HOME/${DOWNLOADS_LOCALE}
+fi
+
+chown $HL_USER:$GRP_USER $HL_HOME/${DOWNLOADS_LOCALE}
+echo "TOKEN_DOWNLOADS=\"$DOWNLOADS_LOCALE\"" >> $TEMP_NEW_USER_DIRS
+
+if [ -d "/run/$HL_USER/home" -o -d "/net/server-sync/home/" ]; then 
+    if [ "$TOKEN_SHARE" != "$SHARE_LOCALE" ]; then
+	    if [ ! -z "$TOKEN_SHARE" -a -e $HL_HOME/${TOKEN_SHARE} ]; then
+	        mv $HL_HOME/${TOKEN_SHARE} $HL_HOME/${SHARE_LOCALE}
+	    else
+	        mkdir $HL_HOME/${SHARE_LOCALE} || true
+	    fi
+    fi
+
+    if [ -L "$HL_HOME/${SHARE_LOCALE}" ]; then
+            rm -rf "$HL_HOME/${SHARE_LOCALE}"
+            mkdir "$HL_HOME/${SHARE_LOCALE}"
+    fi
+    chown $HL_USER:$GRP_USER $HL_HOME/${SHARE_LOCALE}
+    echo "TOKEN_SHARE=\"$SHARE_LOCALE\"" >> $TEMP_NEW_USER_DIRS
+    if [ "$GRP_USER" = "teachers" ]; then
+	if [ "$TOKEN_SHARETEACHERS" != "$SHARETEACHERS_LOCALE" ]; then
+	        if [ ! -z "$SHARETEACHERS_TOKEN" -a -e $HL_HOME/${SHARETEACHERS_TOKEN} ]; then
+	                mv $HL_HOME/${SHARETEACHERS_TOKEN} $HL_HOME/${SHARETEACHERS_LOCALE}
+	        else
+	                mkdir $HL_HOME/${SHARETEACHERS_LOCALE} || true
+		fi
+        fi
+
+        if [ -L "$HL_HOME/${SHARETEACHERS_LOCALE}" ]; then
+            rm -rf "$HL_HOME/${SHARETEACHERS_LOCALE}"
+            mkdir "$HL_HOME/${SHARETEACHERS_LOCALE}"
+        fi
+
+	chown $HL_USER:$GRP_USER $HL_HOME/${SHARETEACHERS_LOCALE}
+	echo "TOKEN_SHARETEACHERS=\"$SHARETEACHERS_LOCALE\"" >> $TEMP_NEW_USER_DIRS
+    fi
+fi
+
+if [ "$TOKEN_GROUPSSHARE" != "$GROUPSSHARE_LOCALE" ]; then
+    if [ ! -z "$TOKEN_GROUPSSHARE" -a -e $HL_HOME/${TOKEN_GROUPSSHARE} ]; then 
+        mv $HL_HOME/${TOKEN_GROUPSSHARE} $HL_HOME/${GROUPSSHARE_LOCALE}
+    else
+        mkdir $HL_HOME/${GROUPSSHARE_LOCALE} || true
+    fi
+fi
+
+if [ -L "$HL_HOME/${GROUPSSHARE_LOCALE}" ]; then
+    rm -rf "$HL_HOME/${GROUPSSHARE_LOCALE}"
+    mkdir "$HL_HOME/${GROUPSSHARE_LOCALE}"
+fi
+
+chown $HL_USER:$GRP_USER $HL_HOME/${GROUPSSHARE_LOCALE}
+echo "TOKEN_GROUPSSHARE=\"$GROUPSSHARE_LOCALE\"" >> $TEMP_NEW_USER_DIRS
+
+fix_owner_home "$HL_HOME" "$GRP_USER" "$HL_USER"
+
+if [ -d "/net/server-sync/home/$GRP_USER/$HL_USER/" ]; then
+    # other machines in aula
+    echo " THIN CLIENT TO MOUNT" >> "$LOG"
+    echo "----------------------" >> "$LOG"
+    echo "MOUNTING ${DESKTOP_LOCALE}" >> "$LOG"
+    [ "${DESKTOP_LOCALE}" = "" ] || mount --bind /net/server-sync/home/$GRP_USER/$HL_USER/Desktop $HL_HOME/${DESKTOP_LOCALE} 1>> $LOG 2>>$LOG || true
+    echo "MOUNTING ${DOCUMENTS_LOCALE}" >> "$LOG"
+    [ "${DOCUMENTS_LOCALE}" = "" ] || mount --bind /net/server-sync/home/$GRP_USER/$HL_USER/Documents $HL_HOME/${DOCUMENTS_LOCALE} 1>> $LOG 2>>$LOG  || true
+    echo "MOUNTING ${SHARE_LOCALE}" >> "$LOG"
+    [ "${SHARE_LOCALE}" = "" ] || mount --bind /net/server-sync/share $HL_HOME/${SHARE_LOCALE} 1>> $LOG 2>>$LOG  || true
+    if [ "$GRP_USER" = "teachers" ]; then
+	# DELETE OLD DIRECTORIES FOR OTHER LANGUAGES
+	for i in es_ES.UTF-8 ca_ES.UTF-8@Valencia ca_ES.UTF-8@valencia en; do
+		SHARETEACHERS_LOCALE_ERASE="$(/usr/bin/xdg_translator "$i"  "Teachers_Share")"
+		if [ -d "$HL_HOME/$SHARETEACHERS_LOCALE_ERASE" ]; then 
+			echo "Borrando $HL_HOME/$SHARETEACHERS_LOCALE_ERASE" >> "$LOG"
+			rm -d "$HL_HOME/$SHARETEACHERS_LOCALE_ERASE" >> "$LOG"
+		fi
+	done
+	for i in es_ES.UTF-8 ca_ES.UTF-8@Valencia ca_ES.UTF-8@valencia en; do
+		DATA_ALUM_ERASE="$(/usr/bin/xdg_translator "$i"  "Data_Alum")"
+		if [ -d "$HL_HOME/$DATA_ALUM_ERASE" ]; then 
+			echo "Borrando $HL_HOME/$DATA_ALUM_ERASE" >> "$LOG"
+			rm -d "$HL_HOME/$DATA_ALUM_ERASE" >> "$LOG"
+		fi
+	done
+	
+	
+	echo "MOUNTING ${SHARETEACHERS_LOCALE}" >> "$LOG"
+	[ -d ${HL_HOME}/${SHARETEACHERS_LOCALE} ] || mkdir ${HL_HOME}/${SHARETEACHERS_LOCALE}
+	[ "${SHARETEACHERS_LOCALE}" = "" ] || mount --bind /net/server-sync/teachers_share $HL_HOME/${SHARETEACHERS_LOCALE} 1>>$LOG 2>>$LOG || true
+	
+	echo "MOUNTING ${DATA_ALUM}" >> "$LOG"
+	[ -d $HL_HOME/$DATA_ALUM ] || mkdir $HL_HOME/$DATA_ALUM
+	[ "${DATA_ALUM}" = "" ]  || mount --bind /net/server-sync/home/students/ $HL_HOME/$DATA_ALUM 1>>$LOG 2>>$LOG || true
+	
+    fi
+    echo "MOUNTING ${GROUPSSHARE_LOCALE}" >> "$LOG"
+    [ "${GROUPSSHARE_LOCALE}" = "" ] || mount --bind /net/server-sync/groups_share $HL_HOME/${GROUPSSHARE_LOCALE} 1>>$LOG 2>>$LOG  || true
+    
+elif [ -d "/var/run/$HL_USER/home" ]; then
+    #Fat clients
+    echo " FATCLIENTS TO MOUNT" >> "$LOG"
+    echo "----------------------" >> "$LOG"
+    echo "MOUNTING ${DESKTOP_LOCALE}" >> "$LOG"
+    [ "${DESKTOP_LOCALE}" = "" ] || mount --bind /run/$HL_USER/home/$GRP_USER/$HL_USER/Desktop $HL_HOME/${DESKTOP_LOCALE} 1>>$LOG 2>>$LOG || true
+    echo "MOUNTING ${DOCUMENTS_LOCALE}" >> "$LOG"
+    [ "${DOCUMENTS_LOCALE}" = "" ] || mount --bind /run/$HL_USER/home/$GRP_USER/$HL_USER/Documents $HL_HOME/${DOCUMENTS_LOCALE} 1>>$LOG 2>>$LOG || true
+    echo "MOUNTING ${SHARE_LOCALE}" >> "$LOG"
+    [ "${SHARE_LOCALE}" = "" ] || mount --bind /run/$HL_USER/share $HL_HOME/${SHARE_LOCALE} 1>>$LOG 2>>$LOG || true
+    if [ "$GRP_USER" = "teachers" ]; then
+	# DELETE OLD DIRECTORIES FOR OTHER LANGUAGES
+	for i in es_ES.UTF-8 ca_ES.UTF-8@Valencia ca_ES.UTF-8@valencia en; do
+		SHARETEACHERS_LOCALE_ERASE="$(/usr/bin/xdg_translator "$i"  "Teachers_Share")"
+		if [ -d $HL_HOME/$SHARETEACHERS_LOCALE_ERASE ]; then 
+			echo "Borrando $HL_HOME/$SHARETEACHERS_LOCALE_ERASE" >> "$LOG"
+			rm -d $HL_HOME/$SHARETEACHERS_LOCALE_ERASE >> "$LOG"
+		fi
+	done
+	for i in es_ES.UTF-8 ca_ES.UTF-8@Valencia ca_ES.UTF-8@valencia en; do
+		DATA_ALUM_ERASE="$(/usr/bin/xdg_translator "$i"  "Data_Alum")"
+		if [ -d $HL_HOME/$DATA_ALUM_ERASE ]; then 
+			echo "Borrando $HL_HOME/$DATA_ALUM_ERASE" >> "$LOG"
+			rm -d $HL_HOME/$DATA_ALUM_ERASE >> "$LOG"
+		fi
+	done
+	
+	echo "MOUNTING ${SHARETEACHERS_LOCALE}" >> "$LOG"
+	[ -d ${HL_HOME}/${SHARETEACHERS_LOCALE} ] || mkdir ${HL_HOME}/${SHARETEACHERS_LOCALE}
+	[ "${SHARETEACHERS_LOCALE}" = "" ] || mount --bind /run/$HL_USER/teachers_share $HL_HOME/${SHARETEACHERS_LOCALE} 1>>$LOG 2>>$LOG || true
+	
+	[ -d $HL_HOME/$DATA_ALUM ] || mkdir $HL_HOME/$DATA_ALUM
+        [ "${DATA_ALUM}" = "" ]  || mount --bind /run/$HL_USER/home/students $HL_HOME/$DATA_ALUM || true
+    fi
+    
+    
+    echo "MOUNTING ${GROUPSSHARE_LOCALE}" >> "$LOG"
+    [ "${GROUPSSHARE_LOCALE}" = "" ] || mount --bind /run/$HL_USER/groups_share $HL_HOME/${GROUPSSHARE_LOCALE} 1>>$LOG 2>>$LOG || true
+    
+fi
+mv ${TEMP_NEW_USER_DIRS} ${LAST_LOGIN_DIRECTORIES}
+
+
+cat > $USER_DIRS << EOF
+# This file is written by xdg-user-dirs-update
+# If you want to change or add directories, just edit the line you're
+# interested in. All local changes will be retained on the next run
+# Format is XDG_xxx_DIR="$HL_HOME/yyy", where yyy is a shell-escaped
+# homedir-relative path, or XDG_xxx_DIR="/yyy", where /yyy is an
+# absolute path. No other format is supported.
+# 
+XDG_DESKTOP_DIR="\$HOME/$DESKTOP_LOCALE"
+XDG_DOWNLOAD_DIR="\$HOME/$DOWNLOADS_LOCALE"
+XDG_DOCUMENTS_DIR="\$HOME/$DOCUMENTS_LOCALE"
+
+EOF
+chmod 600 "$USER_DIRS"
+chown $HL_USER:$GRP_USER "$USER_DIRS"
+echo "" >> "$LOG"
+echo "******* MOUNT SCRIPT FINISHED - SUMMARY *****" >> "$LOG"
+echo "--------------------------------------------" >> "$LOG"
+echo "" >> "$LOG"
+echo "lANGUAGE IS $AUX_LANG" >> "$LOG"
+echo "" >> "$LOG"
+echo "Las variables a tener en cuenta son:" >> "$LOG"
+echo "         \$HL_USER -> $HL_USER" >> "$LOG"
+echo "         \$HL_HOME -> $HL_HOME" >> "$LOG"
+echo "         \$HOME -> $HOME" >> "$LOG"
+echo "         \$DESKTOP_LOCALE -> $DESKTOP_LOCALE" >> "$LOG"
+echo "" >> "$LOG"
+cat $HL_HOME/.config/user-dirs.created >> "$LOG"
+echo "" >> "$LOG"
+cat $HL_HOME/.config/user-dirs.dirs >> "$LOG"
+echo "" >> "$LOG"
+echo "END /usr/sbin/home-linker" >> "$LOG"
+
+
+
+exit 0
