@@ -1,3 +1,9 @@
+home-linker (0.70) bionic; urgency=medium
+
+  * First bionic release
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Wed, 16 Jan 2019 09:47:10 +0100
+
 home-linker (0.65) xenial; urgency=high
 
   * Fixing umount in /usr/sbin/home-linker to fix multiple binds in thin clients
