@@ -14,6 +14,52 @@ echo "******************************" >> "$LOG"
 echo "" >> "$LOG"
 echo "Username -> $1" >> "$LOG"
 
+
+# We first check for server mount configuration
+eval $(n4d-vars getvalues SRV_LITE_MODE)
+OVERRIDE_FILE="/etc/classroom-servermode-override"
+
+# Then we check if client has overriden server configuration
+if [ -e "$OVERRIDE_FILE" ]; then
+	eval $(cat "$OVERRIDE_FILE")
+fi
+
+if [ "$SRV_LITE_MODE" = "True" ];then
+        echo "LITE MODE ENABLED" >> "$LOG"
+fi
+
+
+create_desktop_file() {
+    # 1 $HL_HOME
+    # 2 DESKTOP LOCALE
+    # 3 DOCUMENTS LOCALE
+    
+    DESKTOP_DIR="$1/$2"
+    DOCUMENTS_DIR="$1/$3"
+    DESKTOP_FILE="$DESKTOP_DIR/Documents.desktop"
+    
+    if [ -d "$DESKTOP_DIR" ]; then
+
+        cat > $DESKTOP_FILE << EOF
+[Desktop Entry]
+Name=Network documents
+Name[ca]=Documents de xarxa
+Name[ca@valencia]=Documents de xarxa
+Name[es]=Documentos de red
+GenericName=Personal documents on server
+GenericName[ca]=Personal documents on server
+GenericName[ca@valencia]=Personal documents on server
+GenericName[es]=Personal documents on server
+URL[$e]=$DOCUMENTS_DIR
+Icon=folder-network
+Type=Link
+
+EOF
+    
+    fi
+}
+
+
 trim() {
     local var="$*"
     var="${var#"${var%%[![:space:]]*}"}"   # remove leading whitespace characters
@@ -223,8 +269,15 @@ if [ -d "/net/server-sync/home/$GRP_USER/$HL_USER/" ]; then
     # other machines in aula
     echo " THIN CLIENT TO MOUNT" >> "$LOG"
     echo "----------------------" >> "$LOG"
-    echo "MOUNTING ${DESKTOP_LOCALE}" >> "$LOG"
-    [ "${DESKTOP_LOCALE}" = "" ] || mount --bind /net/server-sync/home/$GRP_USER/$HL_USER/Desktop $HL_HOME/${DESKTOP_LOCALE} 1>> $LOG 2>>$LOG || true
+    
+    if [ "$SRV_LITE_MODE" != "True" ];then
+        echo "MOUNTING ${DESKTOP_LOCALE}" >> "$LOG"
+        [ "${DESKTOP_LOCALE}" = "" ] || mount --bind /net/server-sync/home/$GRP_USER/$HL_USER/Desktop $HL_HOME/${DESKTOP_LOCALE} 1>> $LOG 2>>$LOG || true    
+    else
+	create_desktop_file "${HL_HOME}" "${DESKTOP_LOCALE}" "${DOCUMENTS_LOCALE}"
+    fi
+    
+    
     echo "MOUNTING ${DOCUMENTS_LOCALE}" >> "$LOG"
     [ "${DOCUMENTS_LOCALE}" = "" ] || mount --bind /net/server-sync/home/$GRP_USER/$HL_USER/Documents $HL_HOME/${DOCUMENTS_LOCALE} 1>> $LOG 2>>$LOG  || true
     echo "MOUNTING ${SHARE_LOCALE}" >> "$LOG"
@@ -263,8 +316,13 @@ elif [ -d "/var/run/$HL_USER/home" ]; then
     #Fat clients
     echo " FATCLIENTS TO MOUNT" >> "$LOG"
     echo "----------------------" >> "$LOG"
-    echo "MOUNTING ${DESKTOP_LOCALE}" >> "$LOG"
-    [ "${DESKTOP_LOCALE}" = "" ] || mount --bind /run/$HL_USER/home/$GRP_USER/$HL_USER/Desktop $HL_HOME/${DESKTOP_LOCALE} 1>>$LOG 2>>$LOG || true
+    if [ "$SRV_LITE_MODE" != "True" ];then
+	    echo "MOUNTING ${DESKTOP_LOCALE}" >> "$LOG"
+	    [ "${DESKTOP_LOCALE}" = "" ] || mount --bind /run/$HL_USER/home/$GRP_USER/$HL_USER/Desktop $HL_HOME/${DESKTOP_LOCALE} 1>>$LOG 2>>$LOG || true
+    else
+    	create_desktop_file "${HL_HOME}" "${DESKTOP_LOCALE}" "${DOCUMENTS_LOCALE}"
+    fi
+    
     echo "MOUNTING ${DOCUMENTS_LOCALE}" >> "$LOG"
     [ "${DOCUMENTS_LOCALE}" = "" ] || mount --bind /run/$HL_USER/home/$GRP_USER/$HL_USER/Documents $HL_HOME/${DOCUMENTS_LOCALE} 1>>$LOG 2>>$LOG || true
     echo "MOUNTING ${SHARE_LOCALE}" >> "$LOG"
