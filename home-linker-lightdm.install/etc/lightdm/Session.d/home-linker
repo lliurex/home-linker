@@ -1,6 +1,0 @@
-#!/bin/sh
-set -x 
-
-/usr/sbin/home-linker $USER
-
-exit 0
