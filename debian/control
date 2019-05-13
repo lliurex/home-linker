@@ -23,7 +23,7 @@ Recommends:
 Replaces: lmd-lliurex-data
 Description: Special permissions for thin-clients.
 
-Package: home-linker-lightdm
+Package: home-linker-display-manager
 Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}, home-linker, python
 Recommends:
@@ -37,7 +37,7 @@ Recommends:
 Replaces: lmd-client
 Description: Script for ldm session to mount directories with home-linker
 
-Package: umounter-lightdm
+Package: umounter-systemd
 Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}, python
 Description: Umount devices mounted by pam
