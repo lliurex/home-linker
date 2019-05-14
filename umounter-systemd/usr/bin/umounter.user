@@ -1,0 +1,20 @@
+#!/bin/bash
+
+AUX_LANG=$LANG
+
+DOWNLOADS_LOCALE="$(/usr/bin/xdg_translator "$AUX_LANG" "Downloads")"
+DESKTOP_LOCALE="$(/usr/bin/xdg_translator "$AUX_LANG"  "Desktop")"
+DOCUMENTS_LOCALE="$(/usr/bin/xdg_translator "$AUX_LANG"  "Documents")"
+SHARE_LOCALE="$(/usr/bin/xdg_translator "$AUX_LANG"  "Share")"
+SHARETEACHERS_LOCALE="$(/usr/bin/xdg_translator "$AUX_LANG"  "Teachers_Share")"
+GROUPSSHARE_LOCALE="$(/usr/bin/xdg_translator "$AUX_LANG"  "Groups_Share")"
+DATA_ALUM="$(/usr/bin/xdg_translator "$AUX_LANG"  "Data_Alum")"
+
+SKEL_CMD="fusermount -uz $HOME/"
+
+for D in $DOWNLOADS_LOCALE $DESKTOP_LOCALE $DOCUMENTS_LOCALE $SHARE_LOCALE $SHARETEACHERS_LOCALE $GROUPSSHARE_LOCATE $DATA_ALUM ; do
+
+	CMD="$SKEL_CMD$D"
+	RC= $($CMD 2>/dev/null)  || true
+	
+done
