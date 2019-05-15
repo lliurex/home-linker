@@ -1,5 +1,6 @@
 [Unit]
 Description=Umount user mount points
+ConditionUser=!@system
 
 [Service]
 Type=oneshot
