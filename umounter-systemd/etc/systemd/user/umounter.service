@@ -1,0 +1,12 @@
+[Unit]
+Description=Umount user mount points
+ConditionUser=!@system
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStart=/bin/true
+ExecStop=/usr/bin/umounter
+
+[Install]
+WantedBy=default.target
