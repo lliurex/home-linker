@@ -1,3 +1,9 @@
+home-linker (0.72.1) bionic; urgency=medium
+
+  * Adding user filter 
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Wed, 15 May 2019 17:06:10 +0200
+
 home-linker (0.72) bionic; urgency=high
 
   * removing lightdm references
