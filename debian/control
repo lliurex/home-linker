@@ -9,7 +9,7 @@ Homepage: http://www.lliurex.net
 
 Package: home-linker
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, python 
+Depends: ${shlibs:Depends}, ${misc:Depends}, python, bindfs
 Recommends:
 Provides: xdg-lliurex-dirs
 Replaces: xdg-lliurex-dirs
