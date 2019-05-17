@@ -1,3 +1,9 @@
+home-linker (0.72.2) bionic; urgency=medium
+
+  * Renaming display-manager script name
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Fri, 17 May 2019 13:36:36 +0200
+
 home-linker (0.72.1) bionic; urgency=medium
 
   * Adding user filter 
