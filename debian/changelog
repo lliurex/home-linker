@@ -1,3 +1,10 @@
+home-linker (0.72.3) bionic; urgency=medium
+
+  * Improvements in bindfs mounts
+  * Fixed systemd call
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Thu, 23 May 2019 09:34:28 +0200
+
 home-linker (0.72.2-2) bionic; urgency=medium
 
   * Enabling systemd service
