@@ -1,3 +1,9 @@
+home-linker (0.73) bionic; urgency=medium
+
+  * Added allow_root option to mount
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Tue, 02 Jul 2019 09:57:19 +0200
+
 home-linker (0.72.3) bionic; urgency=medium
 
   * Improvements in bindfs mounts
