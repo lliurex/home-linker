@@ -19,7 +19,23 @@ set -e
 
 case "$1" in
     remove)
-	dpkg-divert --package home-linker --remove --rename --divert /usr/share/xdg-lliurex-dirs/xdg-user-dirs-update.diverted /usr/bin/xdg-user-dirs-update
+	dpkg-divert --package home-linker --remove --rename --divert /usr/share/xdg-lliurex-dirs/xdg-user-dirs-update.diverted /usr/bin/xdg-user-dirs-update || true
+
+
+        PKG="home-linker"
+        ORIGINAL_FUSE="/etc/fuse.conf"
+        LLIUREX_FUSE="/etc/fuse.lliurex"
+        DIVERTED_FUSE="/etc/fuse.diverted"
+
+        if [ -L "$ORIGINAL_FUSE" ]; then
+
+		rm -rf $ORIGINAL_FUSE
+		dpkg-divert --remove --package ${PKG} --rename --divert "$DIVERTED_FUSE" "$ORIGINAL_FUSE"
+
+        fi
+
+
+
 	
     ;;
     upgrade|deconfigure)

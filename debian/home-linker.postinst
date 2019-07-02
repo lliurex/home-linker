@@ -23,6 +23,23 @@ case "$1" in
 	if [ ! -f /usr/share/xdg-lliurex-dirs/xdg-user-dirs-update.diverted ]; then
 		dpkg-divert --package home-linker --add --rename --divert /usr/share/xdg-lliurex-dirs/xdg-user-dirs-update.diverted /usr/bin/xdg-user-dirs-update
 	fi
+
+
+
+	PKG="home-linker"
+	ORIGINAL_FUSE="/etc/fuse.conf"
+	LLIUREX_FUSE="/etc/fuse.lliurex"
+	DIVERTED_FUSE="/etc/fuse.diverted"
+
+        if [ ! -L "$ORIGINAL_FUSE" ]; then
+
+               dpkg-divert --add --package ${PKG} --rename --divert "$DIVERTED_FUSE" "$ORIGINAL_FUSE"
+                ln -s "$LLIUREX_FUSE" "$ORIGINAL_FUSE"
+
+        fi
+
+
+
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
