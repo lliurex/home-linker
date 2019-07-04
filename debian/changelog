@@ -1,3 +1,9 @@
+home-linker (0.74) bionic; urgency=medium
+
+  * allow_other instead of allow_root
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Thu, 04 Jul 2019 13:24:31 +0200
+
 home-linker (0.73) bionic; urgency=medium
 
   * Added allow_root option to mount
