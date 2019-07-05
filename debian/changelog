@@ -1,3 +1,9 @@
+home-linker (0.75) bionic; urgency=medium
+
+  * more aggresive umounter
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Fri, 05 Jul 2019 10:16:19 +0200
+
 home-linker (0.74) bionic; urgency=medium
 
   * allow_other instead of allow_root
