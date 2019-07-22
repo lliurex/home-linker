@@ -73,6 +73,9 @@ trim() {
 USER=$1
 HL_USER=$(trim "$USER")
 
+# Get Usernames
+GRP_USER="$(id -ng $HL_USER)"
+
 if [ ! -z "$2" ]; then
 		HL_HOME="$2"	
 	else
@@ -84,6 +87,18 @@ print '/'.join(tmp[:-1])+'/'+last.strip()
 
 		HL_HOME="$NHOME"
 fi
+
+#
+#
+#
+#LOCALEPATH=$()
+#cat .config/plasma-locale-settings.sh | grep -P "^[^#]" | cut -d " " -f2 > /run/locale_homelinker_temp
+#grep -P "^[^#]" /etc/default/locale >> /run/locale_homelinker_temp
+#tac /run/locale_homelinker_temp | awk '{split($0,a,"="); listado[a[1]]=a[2];}END{for (key in listado) {print key"="listado[key]}}' > /run/locale_homelinker
+#
+#
+#
+#
 
 # From this file get $LANG
 { [ -r "$HL_HOME/.pam_environment" ] && . "$HL_HOME/.pam_environment" ;} || { [ -r "/etc/default/locale" ] && . "/etc/default/locale" ;} || LANG="en"
@@ -99,8 +114,7 @@ fi
 
 
 
-# Get Usernames
-GRP_USER="$(id -ng $HL_USER)"
+
 
 # Source for user-dirs if it exists
 USER_DIRS="$HL_HOME/.config/user-dirs.dirs"
