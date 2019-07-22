@@ -16,7 +16,7 @@ if len(sys.argv) == 2 :
         t.install()
         result = t.gettext(needle)
         if result == needle:
-            t = gettext.translations('homelinker')
+            t = gettext.translation('homelinker')
             t.install()
             result = t.gettext(needle)
     except Exception as e:
