@@ -88,33 +88,28 @@ print '/'.join(tmp[:-1])+'/'+last.strip()
 		HL_HOME="$NHOME"
 fi
 
-#
-#
-#
-#LOCALEPATH=$()
-#cat .config/plasma-locale-settings.sh | grep -P "^[^#]" | cut -d " " -f2 > /run/locale_homelinker_temp
-#grep -P "^[^#]" /etc/default/locale >> /run/locale_homelinker_temp
-#tac /run/locale_homelinker_temp | awk '{split($0,a,"="); listado[a[1]]=a[2];}END{for (key in listado) {print key"="listado[key]}}' > /run/locale_homelinker
-#
-#
-#
-#
 
-# From this file get $LANG
-{ [ -r "$HL_HOME/.pam_environment" ] && . "$HL_HOME/.pam_environment" ;} || { [ -r "/etc/default/locale" ] && . "/etc/default/locale" ;} || LANG="en"
+
+
+{ [ -e "/run/$HL_USER/home/$GRP_USER/$HL_USER/Documents" ] &&  LOCALEPATH="/run/$HL_USER/home/$GRP_USER/$HL_USER/Documents" ; } || { [ -e "/net/server-sync/home/$GRP_USER/$HL_USER/Documents" ] && LOCALEPATH="/net/server-sync/home/$GRP_USER/$HL_USER/Documents" ;} 
+PATHBASEPLASMALOCALE="$LOCALEPATH/.moving_profiles"
+PLASMALOCALE="$PATHBASEPLASMALOCALE/.config/plasma-locale-settings.sh"
+locale-fixer -f $PATHBASEPLASMALOCALE
+if [ -e "$PLASMALOCALE" ]; then
+	cat $PLASMALOCALE | grep -P "^[^#]" | cut -d " " -f2 > /run/locale_homelinker_temp
+fi
+grep -P "^[^#]" /etc/default/locale >> /run/locale_homelinker_temp
+echo "LANG=en" >> /run/locale_homelinker_temp
+tac /run/locale_homelinker_temp | awk '{split($0,a,"="); listvars[a[1]]=a[2];}END{for (key in listvars) {print key"="listvars[key]}}' > /run/locale_homelinker
+rm /run/locale_homelinker_temp
+
+. /run/locale_homelinker
 
 if [ ! -z "$LDM_LANGUAGE" ]; then
 		AUX_LANG="$LDM_LANGUAGE"	
 	else
 		AUX_LANG="$LANG"
 fi
-
-
-
-
-
-
-
 
 # Source for user-dirs if it exists
 USER_DIRS="$HL_HOME/.config/user-dirs.dirs"
@@ -134,13 +129,13 @@ TEMP_NEW_USER_DIRS="$HL_HOME/.config/aux-user-dirs.create"
 get_acl_from_server "$HL_HOME" "$GRP_USER" $HL_USER
 
 # Download directory actions
-DOWNLOADS_LOCALE="$(/usr/bin/xdg_translator "$AUX_LANG" "Downloads")"
-DESKTOP_LOCALE="$(/usr/bin/xdg_translator "$AUX_LANG"  "Desktop")"
-DOCUMENTS_LOCALE="$(/usr/bin/xdg_translator "$AUX_LANG"  "Documents")"
-SHARE_LOCALE="$(/usr/bin/xdg_translator "$AUX_LANG"  "Share")"
-SHARETEACHERS_LOCALE="$(/usr/bin/xdg_translator "$AUX_LANG"  "Teachers_Share")"
-GROUPSSHARE_LOCALE="$(/usr/bin/xdg_translator "$AUX_LANG"  "Groups_Share")"
-DATA_ALUM="$(/usr/bin/xdg_translator "$AUX_LANG"  "Data_Alum")"
+DOWNLOADS_LOCALE="$(LANG=$AUX_LANG LANGUAGE=$LANGUAGE /usr/bin/xdg_translator "Downloads")"
+DESKTOP_LOCALE="$(LANG=$AUX_LANG LANGUAGE=$LANGUAGE /usr/bin/xdg_translator "Desktop")"
+DOCUMENTS_LOCALE="$(LANG=$AUX_LANG LANGUAGE=$LANGUAGE /usr/bin/xdg_translator "Documents")"
+SHARE_LOCALE="$(LANG=$AUX_LANG LANGUAGE=$LANGUAGE /usr/bin/xdg_translator "Share")"
+SHARETEACHERS_LOCALE="$(LANG=$AUX_LANG LANGUAGE=$LANGUAGE /usr/bin/xdg_translator "Teachers_Share")"
+GROUPSSHARE_LOCALE="$(LANG=$AUX_LANG LANGUAGE=$LANGUAGE /usr/bin/xdg_translator "Groups_Share")"
+DATA_ALUM="$(LANG=$AUX_LANG LANGUAGE=$LANGUAGE /usr/bin/xdg_translator "Data_Alum")"
 
 
 [ ! -z $DESKTOP_LOCALE ] || DESKTOP_LOCALE="Desktop"
@@ -393,7 +388,8 @@ echo "" >> "$LOG"
 echo "******* MOUNT SCRIPT FINISHED - SUMMARY *****" >> "$LOG"
 echo "--------------------------------------------" >> "$LOG"
 echo "" >> "$LOG"
-echo "lANGUAGE IS $AUX_LANG" >> "$LOG"
+echo "LANG IS $AUX_LANG" >> "$LOG"
+echo "LANGUAGE IS $LANGUAGE" >> "$LOG"
 echo "" >> "$LOG"
 echo "Las variables a tener en cuenta son:" >> "$LOG"
 echo "         \$HL_USER -> $HL_USER" >> "$LOG"
