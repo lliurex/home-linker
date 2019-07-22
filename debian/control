@@ -2,7 +2,7 @@ Source: home-linker
 Section: gnome
 Priority: extra
 Maintainer: LliureX Team <lliurex@gva.es>
-Build-Depends: debhelper (>= 8.0.0)
+Build-Depends: debhelper (>= 8.0.0), python3-poinstaller
 Standards-Version: 3.9.7
 Homepage: http://www.lliurex.net
 #Vcs-Svn: http://svn.lliurex.net/pandora/xdg-lliurex-dirs/trunk
