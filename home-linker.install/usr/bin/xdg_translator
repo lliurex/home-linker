@@ -1,48 +1,24 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import gettext
 import sys
-if len(sys.argv) == 3 :
-	try:
-		if sys.argv[2] == "Teachers_Share":
-			if sys.argv[1] == "es_ES.UTF-8":
-				print "Profesorado"
-				sys.exit(0)
-			if sys.argv[1] == "ca_ES.UTF-8@Valencia":
-				print "Professorat"
-				sys.exit(0)
-			if sys.argv[1] == "ca_ES.UTF-8@valencia":
-				print "Professorat"
-				sys.exit(0)
-			else:
-				print "Teachers_Share"
-				sys.exit(0)
-		if sys.argv[2] == "Groups_Share":
-			if sys.argv[1] == "es_ES.UTF-8":
-				print "Compartido_de_grupos"
-				sys.exit(0)
-			if sys.argv[1] == "ca_ES.UTF-8@Valencia":
-				print "Compartit_de_grups"
-				sys.exit(0)
-			if sys.argv[1] == "ca_ES.UTF-8@valencia":
-				print "Compartit_de_grups"
-				sys.exit(0)
-			else:
-				print "Groups_Share"
-				sys.exit(0)
-		if sys.argv[2] == "Data_Alum":
-			if sys.argv[1] == "es_ES.UTF-8":
-				print "Datos_Alumnos"
-				sys.exit(0)
-			if sys.argv[1] == "ca_ES.UTF-8@Valencia":
-				print "Dades_Alumnes"
-				sys.exit(0)
-			if sys.argv[1] == "ca_ES.UTF-8@valencia":
-				print "Dades_Alumnes"
-				sys.exit(0)
-			else:
-				print "Data_Alum"
-				sys.exit(0)
-		t = gettext.translation('xdg-user-dirs',languages=[sys.argv[1]])
-		print t.gettext(sys.argv[2])
-	except Exception as e:
-		print sys.argv[2]
+
+_ = gettext.gettext
+
+def get_all_strings():
+    _("Teachers_Share")# es: Profesorado, ca: Professorat
+    _("Groups_Share")# es: Compartido_de_grupos, ca: Compartit_de_grups
+    _("Data_Alum")# es: Datos_Alumnos, ca: Dades_Alumnes
+
+if len(sys.argv) == 2 :
+    needle = sys.argv[1]
+    try:
+        t = gettext.translation('xdg-user-dirs')
+        t.install()
+        result = t.gettext(needle)
+        if result == needle:
+            t = gettext.translations('homelinker')
+            t.install()
+            result = t.gettext(needle)
+    except Exception as e:
+        result = needle
+print(result)
