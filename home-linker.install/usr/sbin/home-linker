@@ -105,11 +105,7 @@ rm /run/locale_homelinker_temp
 
 . /run/locale_homelinker
 
-if [ ! -z "$LDM_LANGUAGE" ]; then
-		AUX_LANG="$LDM_LANGUAGE"	
-	else
-		AUX_LANG="$LANG"
-fi
+AUX_LANG="$LANG"
 
 # Source for user-dirs if it exists
 USER_DIRS="$HL_HOME/.config/user-dirs.dirs"
