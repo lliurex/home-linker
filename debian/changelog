@@ -1,4 +1,4 @@
-home-linker (0.74ubuntu1) bionic; urgency=medium
+home-linker (0.75) bionic; urgency=medium
 
   * Fix bug between homelinker, moving_profiles and locale-fixer
 
