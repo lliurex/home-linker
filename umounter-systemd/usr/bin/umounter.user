@@ -7,14 +7,12 @@ if [ $UID -lt 1041 ]; then
 
 fi
 
-AUX_LANG=$LANG
-
-DESKTOP_LOCALE="$(/usr/bin/xdg_translator "$AUX_LANG"  "Desktop")"
-DOCUMENTS_LOCALE="$(/usr/bin/xdg_translator "$AUX_LANG"  "Documents")"
-SHARE_LOCALE="$(/usr/bin/xdg_translator "$AUX_LANG"  "Share")"
-SHARETEACHERS_LOCALE="$(/usr/bin/xdg_translator "$AUX_LANG"  "Teachers_Share")"
-GROUPSSHARE_LOCALE="$(/usr/bin/xdg_translator "$AUX_LANG"  "Groups_Share")"
-DATA_ALUM="$(/usr/bin/xdg_translator "$AUX_LANG"  "Data_Alum")"
+DESKTOP_LOCALE="$(/usr/bin/xdg_translator "Desktop")"
+DOCUMENTS_LOCALE="$(/usr/bin/xdg_translator "Documents")"
+SHARE_LOCALE="$(/usr/bin/xdg_translator "Share")"
+SHARETEACHERS_LOCALE="$(/usr/bin/xdg_translator "Teachers_Share")"
+GROUPSSHARE_LOCALE="$(/usr/bin/xdg_translator "Groups_Share")"
+DATA_ALUM="$(/usr/bin/xdg_translator "Data_Alum")"
 
 SKEL_CMD="fusermount -uz $HOME/"
 
