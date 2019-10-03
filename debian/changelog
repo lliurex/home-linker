@@ -1,3 +1,10 @@
+home-linker (0.78) bionic; urgency=medium
+
+  * Added extra perms to bindfs
+  * Fixed DATA_ALUM permissions
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Thu, 03 Oct 2019 10:40:18 +0200
+
 home-linker (0.77) bionic; urgency=medium
 
   * Fix bug between homelinker, moving_profiles and locale-fixer
