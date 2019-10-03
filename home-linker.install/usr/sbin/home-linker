@@ -268,6 +268,24 @@ fi
 chown $HL_USER:$GRP_USER $HL_HOME/${GROUPSSHARE_LOCALE}
 echo "TOKEN_GROUPSSHARE=\"$GROUPSSHARE_LOCALE\"" >> $TEMP_NEW_USER_DIRS
 
+
+if [ "$TOKEN_DATA_ALUM" != "$DATA_ALUM" ]; then
+    if [ ! -z "$TOKEN_DATA_ALUM" -a -e $HL_HOME/${TOKEN_DATA_ALUM} ]; then 
+        mv $HL_HOME/${TOKEN_DATA_ALUM} $HL_HOME/${DATA_ALUM}
+    else
+        mkdir $HL_HOME/${DATA_ALUM} || true
+    fi
+fi
+
+if [ -L "$HL_HOME/${DATA_ALUM}" ]; then
+    rm -rf "$HL_HOME/${DATA_ALUM}"
+    mkdir "$HL_HOME/${DATA_ALUM}"
+fi
+
+chown $HL_USER:$GRP_USER $HL_HOME/${DATA_ALUM}
+echo "TOKEN_DATA_ALUM=\"$DATA_ALUM\"" >> $TEMP_NEW_USER_DIRS
+
+
 fix_owner_home "$HL_HOME" "$GRP_USER" "$HL_USER"
 
 if [ -d "/net/server-sync/home/$GRP_USER/$HL_USER/" ]; then
@@ -286,7 +304,7 @@ if [ -d "/net/server-sync/home/$GRP_USER/$HL_USER/" ]; then
     echo "MOUNTING ${DOCUMENTS_LOCALE}" >> "$LOG"
     [ "${DOCUMENTS_LOCALE}" = "" ] || sudo -u "$USER" bindfs -n /net/server-sync/home/$GRP_USER/$HL_USER/Documents $HL_HOME/${DOCUMENTS_LOCALE} -o nonempty,allow_other 1>> $LOG 2>>$LOG  || true
     echo "MOUNTING ${SHARE_LOCALE}" >> "$LOG"
-    [ "${SHARE_LOCALE}" = "" ] || sudo -u "$USER" bindfs -n /net/server-sync/share $HL_HOME/${SHARE_LOCALE} -o nonempty,allow_other 1>> $LOG 2>>$LOG  || true
+    [ "${SHARE_LOCALE}" = "" ] || sudo -u "$USER" bindfs -n /net/server-sync/share $HL_HOME/${SHARE_LOCALE} -p o+rwx --create-with-perms=g+rwx -o nonempty,allow_other 1>> $LOG 2>>$LOG  || true
     if [ "$GRP_USER" = "teachers" ]; then
 	# DELETE OLD DIRECTORIES FOR OTHER LANGUAGES
 	for i in es_ES.UTF-8 ca_ES.UTF-8@Valencia ca_ES.UTF-8@valencia en; do
@@ -307,15 +325,15 @@ if [ -d "/net/server-sync/home/$GRP_USER/$HL_USER/" ]; then
 	
 	echo "MOUNTING ${SHARETEACHERS_LOCALE}" >> "$LOG"
 	[ -d ${HL_HOME}/${SHARETEACHERS_LOCALE} ] || mkdir ${HL_HOME}/${SHARETEACHERS_LOCALE}
-	[ "${SHARETEACHERS_LOCALE}" = "" ] || sudo -u "$USER" bindfs -n /net/server-sync/teachers_share $HL_HOME/${SHARETEACHERS_LOCALE} -o nonempty,allow_other 1>>$LOG 2>>$LOG || true
+	[ "${SHARETEACHERS_LOCALE}" = "" ] || sudo -u "$USER" bindfs -n /net/server-sync/teachers_share $HL_HOME/${SHARETEACHERS_LOCALE} -p o+rwx --create-with-perms=g+rwx -o nonempty,allow_other 1>>$LOG 2>>$LOG || true
 	
 	echo "MOUNTING ${DATA_ALUM}" >> "$LOG"
 	[ -d $HL_HOME/$DATA_ALUM ] || mkdir $HL_HOME/$DATA_ALUM
-	[ "${DATA_ALUM}" = "" ]  || sudo -u "$USER" bindfs -n /net/server-sync/home/students/ $HL_HOME/$DATA_ALUM -o nonempty,allow_other 1>>$LOG 2>>$LOG || true
+	[ "${DATA_ALUM}" = "" ]  || sudo -u "$USER" bindfs -n /net/server-sync/home/students/ $HL_HOME/$DATA_ALUM -o o+rwx --create-with-perms=g+rwx -o nonempty,allow_other 1>>$LOG 2>>$LOG || true
 	
     fi
     echo "MOUNTING ${GROUPSSHARE_LOCALE}" >> "$LOG"
-    [ "${GROUPSSHARE_LOCALE}" = "" ] || sudo -u "$USER" bindfs -n /net/server-sync/groups_share $HL_HOME/${GROUPSSHARE_LOCALE} -o nonempty,allow_other 1>>$LOG 2>>$LOG  || true
+    [ "${GROUPSSHARE_LOCALE}" = "" ] || sudo -u "$USER" bindfs -n /net/server-sync/groups_share $HL_HOME/${GROUPSSHARE_LOCALE} -p o+rwx --create-with-perms=g+rwx -o nonempty,allow_other 1>>$LOG 2>>$LOG  || true
     
 elif [ -d "/var/run/$HL_USER/home" ]; then
     #Fat clients
