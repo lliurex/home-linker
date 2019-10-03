@@ -268,6 +268,24 @@ fi
 chown $HL_USER:$GRP_USER $HL_HOME/${GROUPSSHARE_LOCALE}
 echo "TOKEN_GROUPSSHARE=\"$GROUPSSHARE_LOCALE\"" >> $TEMP_NEW_USER_DIRS
 
+
+if [ "$TOKEN_DATA_ALUM" != "$DATA_ALUM" ]; then
+    if [ ! -z "$TOKEN_DATA_ALUM" -a -e $HL_HOME/${TOKEN_DATA_ALUM} ]; then 
+        mv $HL_HOME/${TOKEN_DATA_ALUM} $HL_HOME/${DATA_ALUM}
+    else
+        mkdir $HL_HOME/${DATA_ALUM} || true
+    fi
+fi
+
+if [ -L "$HL_HOME/${DATA_ALUM}" ]; then
+    rm -rf "$HL_HOME/${DATA_ALUM}"
+    mkdir "$HL_HOME/${DATA_ALUM}"
+fi
+
+chown $HL_USER:$GRP_USER $HL_HOME/${DATA_ALUM}
+echo "TOKEN_DATA_ALUM=\"$DATA_ALUM\"" >> $TEMP_NEW_USER_DIRS
+
+
 fix_owner_home "$HL_HOME" "$GRP_USER" "$HL_USER"
 
 if [ -d "/net/server-sync/home/$GRP_USER/$HL_USER/" ]; then
