@@ -39,7 +39,7 @@ Description: Script for ldm session to mount directories with home-linker
 
 Package: umounter-systemd
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, python
+Depends: ${shlibs:Depends}, ${misc:Depends}, python3
 Description: Umount devices mounted by pam
  Umount devices mounted by users
 
