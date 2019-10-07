@@ -1,9 +1,17 @@
-home-linker (0.79) bionic; urgency=medium
+home-linker (0.80) bionic; urgency=medium
 
   * using mount --bind instead of bindfs. It overcomplicates things.
   * umounter.user now uses n4d calls to umount mount --binds
 
  -- Hector Garcia Huerta <hectorgh@gmail.com>  Mon, 07 Oct 2019 15:54:31 +0200
+
+home-linker (0.79) bionic; urgency=medium
+
+  * Force permissions and create-with-perms on server and thin clients for
+    dolphin work with acl correctly
+
+ -- Raul Rodrigo Segura <raurodse@gmail.com>  Thu, 03 Oct 2019 12:46:07 +0200
+
 
 home-linker (0.78) bionic; urgency=medium
 
