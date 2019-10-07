@@ -1,24 +1,115 @@
-#!/bin/bash
+#!/usr/bin/env python3
 
-if [ $UID -lt 1041 ]; then
+import xmlrpc.client
+import ssl
+import os
+import sys
+import gettext
 
-	# USER NOT SUPPORTED
-	exit 0
 
-fi
+DEBUG=True
 
-DESKTOP_LOCALE="$(/usr/bin/xdg_translator "Desktop")"
-DOCUMENTS_LOCALE="$(/usr/bin/xdg_translator "Documents")"
-SHARE_LOCALE="$(/usr/bin/xdg_translator "Share")"
-SHARETEACHERS_LOCALE="$(/usr/bin/xdg_translator "Teachers_Share")"
-GROUPSSHARE_LOCALE="$(/usr/bin/xdg_translator "Groups_Share")"
-DATA_ALUM="$(/usr/bin/xdg_translator "Data_Alum")"
-
-SKEL_CMD="fusermount -uz $HOME/"
-
-for D in $DOWNLOADS_LOCALE $DESKTOP_LOCALE $DOCUMENTS_LOCALE $SHARE_LOCALE $SHARETEACHERS_LOCALE $GROUPSSHARE_LOCALE $DATA_ALUM ; do
-
-	CMD="$SKEL_CMD$D"
-	RC= $($CMD 2>/dev/null)  || true
+class UMount:
 	
-done
+	def __init__(self):
+	
+		context=ssl._create_unverified_context()	
+		self.client=xmlrpc.client.ServerProxy("https://localhost:9779",allow_none=True,context=context)
+		self.user=os.environ["USER"]
+		self.home="/home/%s"%self.user
+		self.dirs={}
+		
+	#def init
+	
+	def dprint(self,msg):
+		
+		if DEBUG:
+			print("[UMOUNT] %s"%msg)
+	
+	
+	def get_ticket(self):
+		
+		self.client.create_ticket("","NTicketsManager",self.user)
+		ticket="/run/n4d/tickets/%s"%self.user
+		
+		if not os.path.exists(ticket):
+			return None
+			
+		f=open(ticket)
+		t=f.readline().strip("\n")
+		f.close()
+		
+		return t
+		
+	#def get_ticket
+	
+	
+	def get_paths(self):
+		
+		try:
+
+			exec(open(self.home+"/.config/user-dirs.dirs").read())
+			documents=locals()["XDG_DOCUMENTS_DIR"].split("/")[1]
+			desktop=locals()["XDG_DESKTOP_DIR"].split("/")[1]
+			
+			gettext.textdomain("xdg-user-dirs")
+			share=gettext.gettext("Share")
+			
+			gettext.textdomain("homelinker")
+			teachers_share=gettext.gettext("Teachers_Share")
+			groups_share=gettext.gettext("Groups_Share")
+			data_alum=gettext.gettext("Data_Alum")
+			
+			self.dirs["desktop"]=self.home+"/"+desktop
+			self.dirs["documents"]=self.home+"/"+documents
+			self.dirs["share"]=self.home+"/"+share
+			self.dirs["teachers_share"]=self.home+"/"+teachers_share
+			self.dirs["groups_share"]=self.home+"/"+groups_share
+			self.dirs["data_alum"]=self.home+"/"+data_alum
+			
+			return True
+		
+		except Exception as e:
+			
+			return False
+
+		
+	#def get_paths
+	
+	
+	def umount(self,ticket):
+		
+		user=(self.user,ticket)
+		
+		for item in self.dirs:
+			path=self.dirs[item]
+			self.dprint("Umounting %s ..."%path)
+			ret=self.client.restricted_umount(user,"MountManager",self.user,path)
+			self.dprint(ret)
+			
+		
+	#umount
+	
+			
+# class UMount
+
+if __name__=="__main__":
+	
+	if os.getuid() < 1042:
+		sys.exit(0)
+	
+	um=UMount()
+	
+	ticket=um.get_ticket()
+	rpaths=um.get_paths()
+	
+	if not rpaths:
+		um.dprint("[!] Failed to get paths")
+		sys.exit(0)
+	
+	if not ticket:
+		um.dprint("[!] Failed to get ticket")
+		sys.exit(0)
+		
+	um.umount(ticket)	
+	 

@@ -295,16 +295,16 @@ if [ -d "/net/server-sync/home/$GRP_USER/$HL_USER/" ]; then
     
     if [ "$SRV_LITE_MODE" != "True" ];then
         echo "MOUNTING ${DESKTOP_LOCALE}" >> "$LOG"
-        [ "${DESKTOP_LOCALE}" = "" ] || sudo -u "$USER" bindfs -n /net/server-sync/home/$GRP_USER/$HL_USER/Desktop $HL_HOME/${DESKTOP_LOCALE} -o nonempty,allow_other 1>> $LOG 2>>$LOG || true
+        [ "${DESKTOP_LOCALE}" = "" ] || mount --bind /net/server-sync/home/$GRP_USER/$HL_USER/Desktop $HL_HOME/${DESKTOP_LOCALE} 1>> $LOG 2>>$LOG || true
     else
 	create_desktop_file "${HL_HOME}" "${DESKTOP_LOCALE}" "${DOCUMENTS_LOCALE}"
     fi
     
     
     echo "MOUNTING ${DOCUMENTS_LOCALE}" >> "$LOG"
-    [ "${DOCUMENTS_LOCALE}" = "" ] || sudo -u "$USER" bindfs -n /net/server-sync/home/$GRP_USER/$HL_USER/Documents $HL_HOME/${DOCUMENTS_LOCALE} -o nonempty,allow_other 1>> $LOG 2>>$LOG  || true
+    [ "${DOCUMENTS_LOCALE}" = "" ] || mount --bind /net/server-sync/home/$GRP_USER/$HL_USER/Documents $HL_HOME/${DOCUMENTS_LOCALE} 1>> $LOG 2>>$LOG  || true
     echo "MOUNTING ${SHARE_LOCALE}" >> "$LOG"
-    [ "${SHARE_LOCALE}" = "" ] || sudo -u "$USER" bindfs -n /net/server-sync/share $HL_HOME/${SHARE_LOCALE} -p o+rwx --create-with-perms=g+rwx -o nonempty,allow_other 1>> $LOG 2>>$LOG  || true
+    [ "${SHARE_LOCALE}" = "" ] || mount --bind /net/server-sync/share $HL_HOME/${SHARE_LOCALE} 1>> $LOG 2>>$LOG  || true
     if [ "$GRP_USER" = "teachers" ]; then
 	# DELETE OLD DIRECTORIES FOR OTHER LANGUAGES
 	for i in es_ES.UTF-8 ca_ES.UTF-8@Valencia ca_ES.UTF-8@valencia en; do
@@ -325,15 +325,15 @@ if [ -d "/net/server-sync/home/$GRP_USER/$HL_USER/" ]; then
 	
 	echo "MOUNTING ${SHARETEACHERS_LOCALE}" >> "$LOG"
 	[ -d ${HL_HOME}/${SHARETEACHERS_LOCALE} ] || mkdir ${HL_HOME}/${SHARETEACHERS_LOCALE}
-	[ "${SHARETEACHERS_LOCALE}" = "" ] || sudo -u "$USER" bindfs -n /net/server-sync/teachers_share $HL_HOME/${SHARETEACHERS_LOCALE} -p o+rwx --create-with-perms=g+rwx -o nonempty,allow_other 1>>$LOG 2>>$LOG || true
+	[ "${SHARETEACHERS_LOCALE}" = "" ] || mount --bind /net/server-sync/teachers_share $HL_HOME/${SHARETEACHERS_LOCALE} 1>>$LOG 2>>$LOG || true
 	
 	echo "MOUNTING ${DATA_ALUM}" >> "$LOG"
 	[ -d $HL_HOME/$DATA_ALUM ] || mkdir $HL_HOME/$DATA_ALUM
-	[ "${DATA_ALUM}" = "" ]  || sudo -u "$USER" bindfs -n /net/server-sync/home/students/ $HL_HOME/$DATA_ALUM -o o+rwx --create-with-perms=g+rwx -o nonempty,allow_other 1>>$LOG 2>>$LOG || true
+	[ "${DATA_ALUM}" = "" ]  || mount --bind /net/server-sync/home/students/ $HL_HOME/$DATA_ALUM 1>>$LOG 2>>$LOG || true
 	
     fi
     echo "MOUNTING ${GROUPSSHARE_LOCALE}" >> "$LOG"
-    [ "${GROUPSSHARE_LOCALE}" = "" ] || sudo -u "$USER" bindfs -n /net/server-sync/groups_share $HL_HOME/${GROUPSSHARE_LOCALE} -p o+rwx --create-with-perms=g+rwx -o nonempty,allow_other 1>>$LOG 2>>$LOG  || true
+    [ "${GROUPSSHARE_LOCALE}" = "" ] || mount --bind /net/server-sync/groups_share $HL_HOME/${GROUPSSHARE_LOCALE} 1>>$LOG 2>>$LOG  || true
     
 elif [ -d "/var/run/$HL_USER/home" ]; then
     #Fat clients
@@ -341,15 +341,15 @@ elif [ -d "/var/run/$HL_USER/home" ]; then
     echo "----------------------" >> "$LOG"
     if [ "$SRV_LITE_MODE" != "True" ];then
 	    echo "MOUNTING ${DESKTOP_LOCALE}" >> "$LOG"
-	    [ "${DESKTOP_LOCALE}" = "" ] || sudo -u "$USER" bindfs -n /run/$HL_USER/home/$GRP_USER/$HL_USER/Desktop $HL_HOME/${DESKTOP_LOCALE} -o nonempty,allow_other 1>>$LOG 2>>$LOG || true
+	    [ "${DESKTOP_LOCALE}" = "" ] || mount --bind /run/$HL_USER/home/$GRP_USER/$HL_USER/Desktop $HL_HOME/${DESKTOP_LOCALE} 1>>$LOG 2>>$LOG || true
     else
     	create_desktop_file "${HL_HOME}" "${DESKTOP_LOCALE}" "${DOCUMENTS_LOCALE}"
     fi
     
     echo "MOUNTING ${DOCUMENTS_LOCALE}" >> "$LOG"
-    [ "${DOCUMENTS_LOCALE}" = "" ] || sudo -u "$USER" bindfs -n /run/$HL_USER/home/$GRP_USER/$HL_USER/Documents $HL_HOME/${DOCUMENTS_LOCALE} -o nonempty,allow_other 1>>$LOG 2>>$LOG || true
+    [ "${DOCUMENTS_LOCALE}" = "" ] || mount --bind /run/$HL_USER/home/$GRP_USER/$HL_USER/Documents $HL_HOME/${DOCUMENTS_LOCALE} 1>>$LOG 2>>$LOG || true
     echo "MOUNTING ${SHARE_LOCALE}" >> "$LOG"
-    [ "${SHARE_LOCALE}" = "" ] || sudo -u "$USER" bindfs -n /run/$HL_USER/share $HL_HOME/${SHARE_LOCALE} -o nonempty,allow_other 1>>$LOG 2>>$LOG || true
+    [ "${SHARE_LOCALE}" = "" ] || mount --bind /run/$HL_USER/share $HL_HOME/${SHARE_LOCALE} 1>>$LOG 2>>$LOG || true
     if [ "$GRP_USER" = "teachers" ]; then
 	# DELETE OLD DIRECTORIES FOR OTHER LANGUAGES
 	for i in es_ES.UTF-8 ca_ES.UTF-8@Valencia ca_ES.UTF-8@valencia en; do
@@ -369,15 +369,15 @@ elif [ -d "/var/run/$HL_USER/home" ]; then
 	
 	echo "MOUNTING ${SHARETEACHERS_LOCALE}" >> "$LOG"
 	[ -d ${HL_HOME}/${SHARETEACHERS_LOCALE} ] || mkdir ${HL_HOME}/${SHARETEACHERS_LOCALE}
-	[ "${SHARETEACHERS_LOCALE}" = "" ] || sudo -u "$USER" bindfs -n /run/$HL_USER/teachers_share $HL_HOME/${SHARETEACHERS_LOCALE} -o nonempty,allow_other 1>>$LOG 2>>$LOG || true
+	[ "${SHARETEACHERS_LOCALE}" = "" ] || mount --bind /run/$HL_USER/teachers_share $HL_HOME/${SHARETEACHERS_LOCALE} 1>>$LOG 2>>$LOG || true
 	
 	[ -d $HL_HOME/$DATA_ALUM ] || mkdir $HL_HOME/$DATA_ALUM
-        [ "${DATA_ALUM}" = "" ]  || sudo -u "$USER" bindfs -n /run/$HL_USER/home/students $HL_HOME/$DATA_ALUM -o nonempty,allow_other 1>>$LOG 2>>$LOG || true
+        [ "${DATA_ALUM}" = "" ]  || mount --bind /run/$HL_USER/home/students $HL_HOME/$DATA_ALUM || true
     fi
     
     
     echo "MOUNTING ${GROUPSSHARE_LOCALE}" >> "$LOG"
-    [ "${GROUPSSHARE_LOCALE}" = "" ] || sudo -u "$USER" bindfs -n /run/$HL_USER/groups_share $HL_HOME/${GROUPSSHARE_LOCALE} -o nonempty,allow_other 1>>$LOG 2>>$LOG || true
+    [ "${GROUPSSHARE_LOCALE}" = "" ] || mount --bind /run/$HL_USER/groups_share $HL_HOME/${GROUPSSHARE_LOCALE} 1>>$LOG 2>>$LOG || true
     
 fi
 mv ${TEMP_NEW_USER_DIRS} ${LAST_LOGIN_DIRECTORIES}
