@@ -1,5 +1,7 @@
-#!/usr/bin/env python
-import xmlrpclib as x
+#!/usr/bin/env python3
+#import xmlrpclib as x
+import xmlrpc.client as x
+import ssl
 import sys
 import os
 if len(sys.argv) != 4:
@@ -7,7 +9,8 @@ if len(sys.argv) != 4:
 home = sys.argv[1]
 group = sys.argv[2]
 user = sys.argv[3]
-s = x.ServerProxy('https://server:9779')
+context=ssl._create_unverified_context()
+s = x.ServerProxy('https://server:9779',allow_none=True,context=context)
 list_acl = s.get_acl_group_filtered('','NetFoldersManager',group)
 try:
 	apply_nobody_nogroup = False
