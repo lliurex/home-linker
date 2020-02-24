@@ -1,3 +1,9 @@
+home-linker (0.82) bionic; urgency=medium
+
+  * Depences in control with python3 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 24 Feb 2020 13:54:26 +0100
+
 home-linker (0.81) bionic; urgency=medium
 
   * Migrate to python3 
