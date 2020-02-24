@@ -1,3 +1,9 @@
+home-linker (0.81) bionic; urgency=medium
+
+  * Migrate to python3 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 24 Feb 2020 10:16:28 +0100
+
 home-linker (0.80) bionic; urgency=medium
 
   * using mount --bind instead of bindfs. It overcomplicates things.
