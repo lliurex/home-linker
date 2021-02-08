@@ -79,10 +79,10 @@ GRP_USER="$(id -ng $HL_USER)"
 if [ ! -z "$2" ]; then
 		HL_HOME="$2"	
 	else
-		NHOME=$(python -c "
+		NHOME=$(python3 -c "
 tmp='$HOME'.split('/')
 last=tmp[-1]
-print '/'.join(tmp[:-1])+'/'+last.strip()
+print('/'.join(tmp[:-1])+'/'+last.strip())
 ")
 
 		HL_HOME="$NHOME"
