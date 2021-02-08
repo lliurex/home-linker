@@ -29,7 +29,7 @@ class UMount:
 	
 	def get_ticket(self):
 		
-		self.client.create_ticket("","NTicketsManager",self.user)
+		self.client.create_ticket(self.user)
 		ticket="/run/n4d/tickets/%s"%self.user
 		
 		if not os.path.exists(ticket):
