@@ -1,0 +1,252 @@
+home-linker (0.83) focal; urgency=medium
+
+  * First focal release
+  * ported to python3 
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Tue, 09 Feb 2021 11:33:07 +0100
+
+home-linker (0.82) bionic; urgency=medium
+
+  * Depences in control with python3 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 24 Feb 2020 13:54:26 +0100
+
+home-linker (0.81) bionic; urgency=medium
+
+  * Migrate to python3 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 24 Feb 2020 10:16:28 +0100
+
+home-linker (0.80) bionic; urgency=medium
+
+  * using mount --bind instead of bindfs. It overcomplicates things.
+  * umounter.user now uses n4d calls to umount mount --binds
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Mon, 07 Oct 2019 15:54:31 +0200
+
+home-linker (0.79) bionic; urgency=medium
+
+  * Force permissions and create-with-perms on server and thin clients for
+    dolphin work with acl correctly
+
+ -- Raul Rodrigo Segura <raurodse@gmail.com>  Thu, 03 Oct 2019 12:46:07 +0200
+
+
+home-linker (0.78) bionic; urgency=medium
+
+  * Added extra perms to bindfs
+  * Fixed DATA_ALUM permissions
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Thu, 03 Oct 2019 10:40:18 +0200
+
+home-linker (0.77) bionic; urgency=medium
+
+  * Fix bug between homelinker, moving_profiles and locale-fixer
+
+ -- Raul Rodrigo Segura <raurodse@gmail.com>  Mon, 22 Jul 2019 18:32:02 +0200
+
+home-linker (0.75) bionic; urgency=medium
+
+  * more aggresive umounter
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Fri, 05 Jul 2019 10:16:19 +0200
+
+home-linker (0.74) bionic; urgency=medium
+
+  * allow_other instead of allow_root
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Thu, 04 Jul 2019 13:24:31 +0200
+
+home-linker (0.73) bionic; urgency=medium
+
+  * Added allow_root option to mount
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Tue, 02 Jul 2019 09:57:19 +0200
+
+home-linker (0.72.3) bionic; urgency=medium
+
+  * Improvements in bindfs mounts
+  * Fixed systemd call
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Thu, 23 May 2019 09:34:28 +0200
+
+home-linker (0.72.2-2) bionic; urgency=medium
+
+  * Enabling systemd service
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Mon, 20 May 2019 16:11:38 +0200
+
+home-linker (0.72.2-1) bionic; urgency=high
+
+  * Added bindfs dependency
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Fri, 17 May 2019 14:42:16 +0200
+
+home-linker (0.72.2) bionic; urgency=medium
+
+  * Renaming display-manager script name
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Fri, 17 May 2019 13:36:36 +0200
+
+home-linker (0.72.1) bionic; urgency=medium
+
+  * Adding user filter 
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Wed, 15 May 2019 17:06:10 +0200
+
+home-linker (0.72) bionic; urgency=high
+
+  * removing lightdm references
+  * moving umounter to systemd.user instead of dm exit script
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Mon, 13 May 2019 16:11:59 +0200
+
+home-linker (0.71) bionic; urgency=high
+
+  * Adding classroom mount mode functionality
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Tue, 12 Feb 2019 10:17:48 +0100
+
+home-linker (0.70) bionic; urgency=medium
+
+  * First bionic release
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Wed, 16 Jan 2019 09:47:10 +0100
+
+home-linker (0.65) xenial; urgency=high
+
+  * Fixing umount in /usr/sbin/home-linker to fix multiple binds in thin clients
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Wed, 31 May 2017 14:52:23 +0200
+
+home-linker (0.64) xenial; urgency=high
+
+  * Adding lazy option to umount
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Fri, 26 May 2017 11:58:09 +0200
+
+home-linker (0.63) xenial; urgency=high
+
+  * Removing tree in log
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Fri, 12 May 2017 09:57:27 +0200
+
+home-linker (0.62) xenial; urgency=high
+
+  * fix bug in Wellcome echo  
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Thu, 30 Mar 2017 15:05:59 +0200
+
+home-linker (0.61) xenial; urgency=high
+
+  * Fixed Desktop mount
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Fri, 11 Nov 2016 13:00:00 +0100
+
+home-linker (0.60) xenial; urgency=high
+
+  * Fix bug in umount home-linker 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Wed, 09 Nov 2016 13:04:48 +0100
+
+home-linker (0.59) xenial; urgency=high
+
+  * Eliminate dependence home-linker-sudoers in ldm-client 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Tue, 08 Nov 2016 12:44:28 +0100
+
+home-linker (0.58) xenial; urgency=high
+
+  *  Change grep to umount mounted directories in login user
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Tue, 08 Nov 2016 12:33:16 +0100
+
+home-linker (0.57) xenial; urgency=high
+
+  * Deleting obsolete directories in bind for other languages 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 31 Oct 2016 17:37:01 +0100
+
+home-linker (0.56) xenial; urgency=high
+
+  * bug in translator
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 31 Oct 2016 16:32:50 +0100
+
+home-linker (0.55) xenial; urgency=high
+
+  * Add translation for data alum
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 31 Oct 2016 16:08:06 +0100
+
+home-linker (0.54) xenial; urgency=high
+
+  * Fixing translations
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 31 Oct 2016 14:55:54 +0100
+
+home-linker (0.53) xenial; urgency=high
+
+  * diversions modify 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 31 Oct 2016 13:41:57 +0100
+
+home-linker (0.52) xenial; urgency=high
+
+  * diversions modified
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 31 Oct 2016 13:04:22 +0100
+
+home-linker (0.51) xenial; urgency=high
+
+  * Change package for diversion 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Fri, 28 Oct 2016 13:21:39 +0200
+
+home-linker (0.44) xenial; urgency=high
+
+  * New files with prides and replaces in debian/control
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Thu, 27 Oct 2016 13:56:24 +0200
+
+home-linker (0.43) xenial; urgency=high
+
+  * Adding trasnlations to xdg_translator for Group_Share
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 10 Oct 2016 17:08:25 +0200
+
+home-linker (0.42) xenial; urgency=high
+
+  * bug in route to file lightdm
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 10 Oct 2016 16:34:41 +0200
+
+home-linker (0.41) xenial; urgency=high
+
+  * Modify files
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Wed, 05 Oct 2016 10:03:43 +0200
+
+home-linker (0.4) xenial; urgency=high
+
+  * Adding new files for some scenaries 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Thu, 29 Sep 2016 12:25:43 +0200
+
+home-linker (0.3) xenial; urgency=high
+
+  * Changing variable to home after login 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 26 Sep 2016 17:32:57 +0200
+
+home-linker (0.2) xenial; urgency=high
+
+  * Adding new files in /usr/bin to home-linker to be independent 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 19 Sep 2016 13:30:43 +0200
+
+home-linker (0.1) xenial; urgency=high
+
+  * Initial release.
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Thu, 15 Sep 2016 10:20:15 +0200

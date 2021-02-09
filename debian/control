@@ -1,0 +1,45 @@
+Source: home-linker
+Section: gnome
+Priority: extra
+Maintainer: LliureX Team <lliurex@gva.es>
+Build-Depends: debhelper (>= 8.0.0), python3-poinstaller
+Standards-Version: 3.9.7
+Homepage: http://www.lliurex.net
+#Vcs-Svn: http://svn.lliurex.net/pandora/xdg-lliurex-dirs/trunk
+
+Package: home-linker
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}, python3, bindfs
+Recommends:
+Provides: xdg-lliurex-dirs
+Replaces: xdg-lliurex-dirs
+Description: Link and rename directories based language
+ Mount with bind directories mounted by samba or existent on /net
+
+Package: home-linker-ldm-sudoers
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}, home-linker, python3
+Recommends:
+Replaces: lmd-lliurex-data
+Description: Special permissions for thin-clients.
+
+Package: home-linker-display-manager
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}, home-linker, python3
+Recommends:
+Replaces: xdg-lliurex-dirs
+Description: Script for lightdm session to mount directories with home-linker
+
+Package: home-linker-ldm-client
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}, home-linker, python3
+Recommends:
+Replaces: lmd-client
+Description: Script for ldm session to mount directories with home-linker
+
+Package: umounter-systemd
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}, python3
+Description: Umount devices mounted by pam
+ Umount devices mounted by users
+
