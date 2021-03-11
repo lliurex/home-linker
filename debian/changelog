@@ -1,3 +1,10 @@
+home-linker (0.93) focal; urgency=medium
+
+  * Fixed language change recognition
+  * changed umounter to umounter.user
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Thu, 11 Mar 2021 15:55:28 +0100
+
 home-linker (0.83) focal; urgency=medium
 
   * First focal release
