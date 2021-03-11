@@ -93,12 +93,12 @@ fi
 
 { [ -e "/run/$HL_USER/home/$GRP_USER/$HL_USER/Documents" ] &&  LOCALEPATH="/run/$HL_USER/home/$GRP_USER/$HL_USER/Documents" ; } || { [ -e "/net/server-sync/home/$GRP_USER/$HL_USER/Documents" ] && LOCALEPATH="/net/server-sync/home/$GRP_USER/$HL_USER/Documents" ;} 
 PATHBASEPLASMALOCALE="$LOCALEPATH/.moving_profiles"
-PLASMALOCALE="$PATHBASEPLASMALOCALE/.config/plasma-locale-settings.sh"
+PLASMALOCALE="$PATHBASEPLASMALOCALE/.config/plasma-localerc"
 locale-fixer -f $PATHBASEPLASMALOCALE
 if [ -e "$PLASMALOCALE" ]; then
-	cat $PLASMALOCALE | grep -P "^[^#]" | cut -d " " -f2 > /run/locale_homelinker_temp
+	cat $PLASMALOCALE | grep -P "^\w.*" | tr -d "[:blank:]" > /run/locale_homelinker_temp
 fi
-grep -P "^[^#]" /etc/default/locale >> /run/locale_homelinker_temp
+grep -P "^\w.*" /etc/default/locale >> /run/locale_homelinker_temp
 echo "LANG=en" >> /run/locale_homelinker_temp
 tac /run/locale_homelinker_temp | awk '{split($0,a,"="); listvars[a[1]]=a[2];}END{for (key in listvars) {print key"="listvars[key]}}' > /run/locale_homelinker
 rm /run/locale_homelinker_temp
