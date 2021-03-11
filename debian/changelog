@@ -1,3 +1,9 @@
+home-linker (0.85) bionic; urgency=medium
+
+  * Fixed user-dirs.created
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Thu, 11 Mar 2021 16:06:56 +0100
+
 home-linker (0.84) bionic; urgency=medium
 
   * Fixing language change recognition
