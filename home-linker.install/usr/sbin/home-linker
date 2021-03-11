@@ -398,6 +398,7 @@ XDG_DOCUMENTS_DIR="\$HOME/$DOCUMENTS_LOCALE"
 EOF
 chmod 600 "$USER_DIRS"
 chown $HL_USER:$GRP_USER "$USER_DIRS"
+chown $HL_USER:$GRP_USER "$LAST_LOGIN_DIRECTORIES"
 echo "" >> "$LOG"
 echo "******* MOUNT SCRIPT FINISHED - SUMMARY *****" >> "$LOG"
 echo "--------------------------------------------" >> "$LOG"
