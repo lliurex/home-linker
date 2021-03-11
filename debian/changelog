@@ -1,3 +1,9 @@
+home-linker (0.94) focal; urgency=medium
+
+  * Fixed user-dirs.created ownership
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Thu, 11 Mar 2021 16:11:08 +0100
+
 home-linker (0.93) focal; urgency=medium
 
   * Fixed language change recognition
