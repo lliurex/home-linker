@@ -6,7 +6,7 @@ ConditionUser=!@system
 Type=oneshot
 RemainAfterExit=true
 ExecStart=/bin/true
-ExecStop=/usr/bin/umounter
+ExecStop=/usr/bin/umounter.user
 
 [Install]
 WantedBy=default.target
