@@ -88,7 +88,7 @@ print('/'.join(tmp[:-1])+'/'+last.strip())
 		HL_HOME="$NHOME"
 fi
 
-
+echo "Group -> $GRP_USER" >> "$LOG"
 
 
 { [ -e "/run/$HL_USER/home/$GRP_USER/$HL_USER/Documents" ] &&  LOCALEPATH="/run/$HL_USER/home/$GRP_USER/$HL_USER/Documents" ; } || { [ -e "/net/server-sync/home/$GRP_USER/$HL_USER/Documents" ] && LOCALEPATH="/net/server-sync/home/$GRP_USER/$HL_USER/Documents" ;} 
@@ -125,13 +125,13 @@ TEMP_NEW_USER_DIRS="$HL_HOME/.config/aux-user-dirs.create"
 get_acl_from_server "$HL_HOME" "$GRP_USER" $HL_USER
 
 # Download directory actions
-DOWNLOADS_LOCALE="$(LANG=$AUX_LANG LANGUAGE=$LANGUAGE /usr/bin/xdg_translator "Downloads")"
-DESKTOP_LOCALE="$(LANG=$AUX_LANG LANGUAGE=$LANGUAGE /usr/bin/xdg_translator "Desktop")"
-DOCUMENTS_LOCALE="$(LANG=$AUX_LANG LANGUAGE=$LANGUAGE /usr/bin/xdg_translator "Documents")"
-SHARE_LOCALE="$(LANG=$AUX_LANG LANGUAGE=$LANGUAGE /usr/bin/xdg_translator "Share")"
-SHARETEACHERS_LOCALE="$(LANG=$AUX_LANG LANGUAGE=$LANGUAGE /usr/bin/xdg_translator "Teachers_Share")"
-GROUPSSHARE_LOCALE="$(LANG=$AUX_LANG LANGUAGE=$LANGUAGE /usr/bin/xdg_translator "Groups_Share")"
-DATA_ALUM="$(LANG=$AUX_LANG LANGUAGE=$LANGUAGE /usr/bin/xdg_translator "Data_Alum")"
+DOWNLOADS_LOCALE="$(LANG=$AUX_LANG LANGUAGE="$LANGUAGE" /usr/bin/xdg_translator "Downloads")"
+DESKTOP_LOCALE="$(LANG=$AUX_LANG LANGUAGE="$LANGUAGE" /usr/bin/xdg_translator "Desktop")"
+DOCUMENTS_LOCALE="$(LANG=$AUX_LANG LANGUAGE="$LANGUAGE" /usr/bin/xdg_translator "Documents")"
+SHARE_LOCALE="$(LANG=$AUX_LANG LANGUAGE="$LANGUAGE" /usr/bin/xdg_translator "Share")"
+SHARETEACHERS_LOCALE="$(LANG=$AUX_LANG LANGUAGE="$LANGUAGE" /usr/bin/xdg_translator "Teachers_Share")"
+GROUPSSHARE_LOCALE="$(LANG=$AUX_LANG LANGUAGE="$LANGUAGE" /usr/bin/xdg_translator "Groups_Share")"
+DATA_ALUM="$(LANG=$AUX_LANG LANGUAGE="$LANGUAGE" /usr/bin/xdg_translator "Data_Alum")"
 
 
 [ ! -z $DESKTOP_LOCALE ] || DESKTOP_LOCALE="Desktop"
@@ -141,8 +141,6 @@ DATA_ALUM="$(LANG=$AUX_LANG LANGUAGE=$LANGUAGE /usr/bin/xdg_translator "Data_Alu
 [ ! -z $SHARETEACHERS_LOCALE ] || SHARETEACHERS_LOCALE="Teachers_Share"
 [ ! -z $GROUPSSHARE_LOCALE ] || GROUPSSHARE_LOCALE="Groups_Share"
 [ ! -z $DATA_ALUM ] || DATA_ALUM="Data_Alumn"
-
-
 
 
 # Umount directories mounted previously
@@ -249,8 +247,27 @@ if [ -d "/run/$HL_USER/home" -o -d "/net/server-sync/home/" ]; then
 
 	chown $HL_USER:$GRP_USER $HL_HOME/${SHARETEACHERS_LOCALE}
 	echo "TOKEN_SHARETEACHERS=\"$SHARETEACHERS_LOCALE\"" >> $TEMP_NEW_USER_DIRS
+	
+	if [ "$TOKEN_DATA_ALUM" != "$DATA_ALUM" ]; then
+                if [ ! -z "$TOKEN_DATA_ALUM" -a -e $HL_HOME/${TOKEN_DATA_ALUM} ]; then 
+                        mv $HL_HOME/${TOKEN_DATA_ALUM} $HL_HOME/${DATA_ALUM}
+                else
+                        mkdir $HL_HOME/${DATA_ALUM} || true
+                fi
+        fi
+	
+        if [ -L "$HL_HOME/${DATA_ALUM}" ]; then
+                rm -rf "$HL_HOME/${DATA_ALUM}"
+                mkdir "$HL_HOME/${DATA_ALUM}"
+        fi
+
+        chown $HL_USER:$GRP_USER $HL_HOME/${DATA_ALUM}
+        echo "TOKEN_DATA_ALUM=\"$DATA_ALUM\"" >> $TEMP_NEW_USER_DIRS	
+	
     fi
 fi
+
+
 
 if [ "$TOKEN_GROUPSSHARE" != "$GROUPSSHARE_LOCALE" ]; then
     if [ ! -z "$TOKEN_GROUPSSHARE" -a -e $HL_HOME/${TOKEN_GROUPSSHARE} ]; then 
@@ -267,24 +284,6 @@ fi
 
 chown $HL_USER:$GRP_USER $HL_HOME/${GROUPSSHARE_LOCALE}
 echo "TOKEN_GROUPSSHARE=\"$GROUPSSHARE_LOCALE\"" >> $TEMP_NEW_USER_DIRS
-
-
-if [ "$TOKEN_DATA_ALUM" != "$DATA_ALUM" ]; then
-    if [ ! -z "$TOKEN_DATA_ALUM" -a -e $HL_HOME/${TOKEN_DATA_ALUM} ]; then 
-        mv $HL_HOME/${TOKEN_DATA_ALUM} $HL_HOME/${DATA_ALUM}
-    else
-        mkdir $HL_HOME/${DATA_ALUM} || true
-    fi
-fi
-
-if [ -L "$HL_HOME/${DATA_ALUM}" ]; then
-    rm -rf "$HL_HOME/${DATA_ALUM}"
-    mkdir "$HL_HOME/${DATA_ALUM}"
-fi
-
-chown $HL_USER:$GRP_USER $HL_HOME/${DATA_ALUM}
-echo "TOKEN_DATA_ALUM=\"$DATA_ALUM\"" >> $TEMP_NEW_USER_DIRS
-
 
 fix_owner_home "$HL_HOME" "$GRP_USER" "$HL_USER"
 

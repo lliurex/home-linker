@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import gettext
 import sys
+import os
 
 _ = gettext.gettext
 
@@ -9,14 +10,16 @@ def get_all_strings():
     _("Groups_Share")# es: Compartido_de_grupos, ca: Compartit_de_grups
     _("Data_Alum")# es: Datos_Alumnos, ca: Dades_Alumnes
 
+
 if len(sys.argv) == 2 :
     needle = sys.argv[1]
+
     try:
         t = gettext.translation('xdg-user-dirs')
         t.install()
         result = t.gettext(needle)
         if result == needle:
-            t = gettext.translation('homelinker')
+            t = gettext.translation('homelinker',localedir="/usr/share/locale")
             t.install()
             result = t.gettext(needle)
     except Exception as e:
