@@ -4,7 +4,7 @@ ConditionUser=!@system
 
 [Service]
 Type=oneshot
-RemainAfterExit=true
+RemainAfterExit=yes
 ExecStart=/bin/true
 ExecStop=/usr/bin/umounter.user
 
