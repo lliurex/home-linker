@@ -1,3 +1,9 @@
+home-linker (0.97) focal; urgency=medium
+
+  * umounter.user lazy umount
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Mon, 12 Jul 2021 12:12:03 +0200
+
 home-linker (0.96) focal; urgency=medium
 
   * Fixed umounter service
