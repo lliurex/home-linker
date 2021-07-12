@@ -84,7 +84,7 @@ class UMount:
 		for item in self.dirs:
 			path=self.dirs[item]
 			self.dprint("Umounting %s ..."%path)
-			ret=self.client.restricted_umount(user,"MountManager",self.user,path)
+			ret=self.client.restricted_umount(user,"MountManager",self.user,path,True)
 			self.dprint(ret)
 			
 		
