@@ -1,3 +1,9 @@
+home-linker (0.96) focal; urgency=medium
+
+  * Fixed umounter service
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Mon, 12 Jul 2021 10:19:20 +0200
+
 home-linker (0.95) focal; urgency=medium
 
   * Fixed Data_Alum creation
