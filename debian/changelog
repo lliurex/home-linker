@@ -1,3 +1,9 @@
+home-linker (0.98) focal; urgency=medium
+
+  * Fixed get_acl_from_server. Needed new n4d return format support
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Wed, 10 Nov 2021 10:43:24 +0100
+
 home-linker (0.97) focal; urgency=medium
 
   * umounter.user lazy umount
