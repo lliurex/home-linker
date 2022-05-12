@@ -74,7 +74,13 @@ USER=$1
 HL_USER=$(trim "$USER")
 
 # Get Usernames
-GRP_USER="$(id -ng $HL_USER)"
+rc=0
+rc=$( id $HL_USER | grep "teachers\|students\|admins" && echo 1)
+if [ "$rc" == "1" ]; then 
+	GRP_USER="$(id $HL_USER | sed -e "s/.*\(teachers\|students\|admins\).*/\1/g")"
+else
+	GRP_USER="$(id -ng $HL_USER)"
+fi
 
 if [ ! -z "$2" ]; then
 		HL_HOME="$2"	
