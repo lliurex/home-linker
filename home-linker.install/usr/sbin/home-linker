@@ -75,8 +75,8 @@ HL_USER=$(trim "$USER")
 
 # Get Usernames
 rc=0
-rc=$( id $HL_USER | grep "teachers\|students\|admins" && echo 1)
-if [ "$rc" == "1" ]; then 
+rc=$( id $HL_USER | grep -q "teachers\|students\|admins" && echo 1)
+if [ "$rc" = "1" ]; then 
 	GRP_USER="$(id $HL_USER | sed -e "s/.*\(teachers\|students\|admins\).*/\1/g")"
 else
 	GRP_USER="$(id -ng $HL_USER)"
