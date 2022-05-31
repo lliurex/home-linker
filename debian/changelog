@@ -1,3 +1,9 @@
+home-linker (0.86) bionic; urgency=medium
+
+  * Add support to CDC users 
+
+ -- Raul Rodrigo Segura <raurodse@gmail.com>  Tue, 31 May 2022 11:12:34 +0200
+
 home-linker (0.85) bionic; urgency=medium
 
   * Fixed user-dirs.created
