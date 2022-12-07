@@ -72,6 +72,12 @@ trim() {
 #GET VARIABLES
 USER=$1
 HL_USER=$(trim "$USER")
+CDC_USER=0
+rc=0
+rc=$( id $HL_USER | grep -q "Domain Users" && echo 1)
+if [ "$rc" = 1 ] ; then
+	CDC_USER=1
+fi
 
 # Get Usernames
 rc=0
@@ -202,9 +208,9 @@ if [ -L "$HL_HOME/${DOCUMENTS_LOCALE}" ]; then
     mkdir $HL_HOME/${DOCUMENTS_LOCALE}
 fi
 
-
 chown $HL_USER:$GRP_USER $HL_HOME/${DOCUMENTS_LOCALE}
 echo "TOKEN_DOCUMENTS=\"$DOCUMENTS_LOCALE\"" >> $TEMP_NEW_USER_DIRS
+
 
 if [ "$TOKEN_DOWNLOADS" != "$DOWNLOADS_LOCALE" ]; then
     if [ ! -z "$TOKEN_DOWNLOADS" -a -e $HL_HOME/${TOKEN_DOWNLOADS} ]; then 
@@ -222,7 +228,7 @@ fi
 chown $HL_USER:$GRP_USER $HL_HOME/${DOWNLOADS_LOCALE}
 echo "TOKEN_DOWNLOADS=\"$DOWNLOADS_LOCALE\"" >> $TEMP_NEW_USER_DIRS
 
-if [ -d "/run/$HL_USER/home" -o -d "/net/server-sync/home/" ]; then 
+if [ -d "/run/$HL_USER/home" -o -d "/net/server-sync/home/" -a "$CDC_USER" = "0" ]; then 
     if [ "$TOKEN_SHARE" != "$SHARE_LOCALE" ]; then
 	    if [ ! -z "$TOKEN_SHARE" -a -e $HL_HOME/${TOKEN_SHARE} ]; then
 	        mv $HL_HOME/${TOKEN_SHARE} $HL_HOME/${SHARE_LOCALE}
@@ -273,23 +279,24 @@ if [ -d "/run/$HL_USER/home" -o -d "/net/server-sync/home/" ]; then
     fi
 fi
 
+if [ "$CDC_USER" = "0" ]; then
 
+	if [ "$TOKEN_GROUPSSHARE" != "$GROUPSSHARE_LOCALE" ]; then
+	    if [ ! -z "$TOKEN_GROUPSSHARE" -a -e $HL_HOME/${TOKEN_GROUPSSHARE} ]; then 
+		mv $HL_HOME/${TOKEN_GROUPSSHARE} $HL_HOME/${GROUPSSHARE_LOCALE}
+	    else
+		mkdir $HL_HOME/${GROUPSSHARE_LOCALE} || true
+	    fi
+	fi
 
-if [ "$TOKEN_GROUPSSHARE" != "$GROUPSSHARE_LOCALE" ]; then
-    if [ ! -z "$TOKEN_GROUPSSHARE" -a -e $HL_HOME/${TOKEN_GROUPSSHARE} ]; then 
-        mv $HL_HOME/${TOKEN_GROUPSSHARE} $HL_HOME/${GROUPSSHARE_LOCALE}
-    else
-        mkdir $HL_HOME/${GROUPSSHARE_LOCALE} || true
-    fi
+	if [ -L "$HL_HOME/${GROUPSSHARE_LOCALE}" ]; then
+	    rm -rf "$HL_HOME/${GROUPSSHARE_LOCALE}"
+	    mkdir "$HL_HOME/${GROUPSSHARE_LOCALE}"
+	fi
+	chown $HL_USER:$GRP_USER $HL_HOME/${GROUPSSHARE_LOCALE}
+	echo "TOKEN_GROUPSSHARE=\"$GROUPSSHARE_LOCALE\"" >> $TEMP_NEW_USER_DIRS
+
 fi
-
-if [ -L "$HL_HOME/${GROUPSSHARE_LOCALE}" ]; then
-    rm -rf "$HL_HOME/${GROUPSSHARE_LOCALE}"
-    mkdir "$HL_HOME/${GROUPSSHARE_LOCALE}"
-fi
-
-chown $HL_USER:$GRP_USER $HL_HOME/${GROUPSSHARE_LOCALE}
-echo "TOKEN_GROUPSSHARE=\"$GROUPSSHARE_LOCALE\"" >> $TEMP_NEW_USER_DIRS
 
 fix_owner_home "$HL_HOME" "$GRP_USER" "$HL_USER"
 
