@@ -1,3 +1,9 @@
+home-linker (0.100) focal; urgency=medium
+
+  * Not mount shared folder for CDC users
+
+ -- Raul Rodrigo Segura <raurodse@gmail.com>  Wed, 07 Dec 2022 18:00:07 +0100
+
 home-linker (0.99) focal; urgency=medium
 
   * Add support to CDC users
