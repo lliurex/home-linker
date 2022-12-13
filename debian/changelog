@@ -1,3 +1,9 @@
+home-linker (0.101) focal; urgency=medium
+
+  * Remove from CDC users useless folders
+
+ -- Raul Rodrigo Segura <raurodse@gmail.com>  Tue, 13 Dec 2022 13:32:31 +0100
+
 home-linker (0.100) focal; urgency=medium
 
   * Not mount shared folder for CDC users
