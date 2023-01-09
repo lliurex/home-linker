@@ -72,30 +72,35 @@ trim() {
 #GET VARIABLES
 USER=$1
 HL_USER=$(trim "$USER")
+CDC_USER=0
+rc=0
+rc=$( id $HL_USER | grep -q "Domain Users" && echo 1)
+if [ "$rc" = 1 ] ; then
+	CDC_USER=1
+fi
 
 # Get Usernames
-
 rc=0
 rc=$( id $HL_USER | grep -q "teachers\|students\|admins" && echo 1)
 if [ "$rc" = "1" ]; then 
-       GRP_USER="$(id $HL_USER | sed -e "s/.*\(teachers\|students\|admins\).*/\1/g")"
+	GRP_USER="$(id $HL_USER | sed -e "s/.*\(teachers\|students\|admins\).*/\1/g")"
 else
-       GRP_USER="$(id -ng $HL_USER)"
+	GRP_USER="$(id -ng $HL_USER)"
 fi
 
 if [ ! -z "$2" ]; then
 		HL_HOME="$2"	
 	else
-		NHOME=$(python -c "
+		NHOME=$(python3 -c "
 tmp='$HOME'.split('/')
 last=tmp[-1]
-print '/'.join(tmp[:-1])+'/'+last.strip()
+print('/'.join(tmp[:-1])+'/'+last.strip())
 ")
 
 		HL_HOME="$NHOME"
 fi
 
-
+echo "Group -> $GRP_USER" >> "$LOG"
 
 
 { [ -e "/run/$HL_USER/home/$GRP_USER/$HL_USER/Documents" ] &&  LOCALEPATH="/run/$HL_USER/home/$GRP_USER/$HL_USER/Documents" ; } || { [ -e "/net/server-sync/home/$GRP_USER/$HL_USER/Documents" ] && LOCALEPATH="/net/server-sync/home/$GRP_USER/$HL_USER/Documents" ;} 
@@ -132,13 +137,13 @@ TEMP_NEW_USER_DIRS="$HL_HOME/.config/aux-user-dirs.create"
 get_acl_from_server "$HL_HOME" "$GRP_USER" $HL_USER
 
 # Download directory actions
-DOWNLOADS_LOCALE="$(LANG=$AUX_LANG LANGUAGE=$LANGUAGE /usr/bin/xdg_translator "Downloads")"
-DESKTOP_LOCALE="$(LANG=$AUX_LANG LANGUAGE=$LANGUAGE /usr/bin/xdg_translator "Desktop")"
-DOCUMENTS_LOCALE="$(LANG=$AUX_LANG LANGUAGE=$LANGUAGE /usr/bin/xdg_translator "Documents")"
-SHARE_LOCALE="$(LANG=$AUX_LANG LANGUAGE=$LANGUAGE /usr/bin/xdg_translator "Share")"
-SHARETEACHERS_LOCALE="$(LANG=$AUX_LANG LANGUAGE=$LANGUAGE /usr/bin/xdg_translator "Teachers_Share")"
-GROUPSSHARE_LOCALE="$(LANG=$AUX_LANG LANGUAGE=$LANGUAGE /usr/bin/xdg_translator "Groups_Share")"
-DATA_ALUM="$(LANG=$AUX_LANG LANGUAGE=$LANGUAGE /usr/bin/xdg_translator "Data_Alum")"
+DOWNLOADS_LOCALE="$(LANG=$AUX_LANG LANGUAGE="$LANGUAGE" /usr/bin/xdg_translator "Downloads")"
+DESKTOP_LOCALE="$(LANG=$AUX_LANG LANGUAGE="$LANGUAGE" /usr/bin/xdg_translator "Desktop")"
+DOCUMENTS_LOCALE="$(LANG=$AUX_LANG LANGUAGE="$LANGUAGE" /usr/bin/xdg_translator "Documents")"
+SHARE_LOCALE="$(LANG=$AUX_LANG LANGUAGE="$LANGUAGE" /usr/bin/xdg_translator "Share")"
+SHARETEACHERS_LOCALE="$(LANG=$AUX_LANG LANGUAGE="$LANGUAGE" /usr/bin/xdg_translator "Teachers_Share")"
+GROUPSSHARE_LOCALE="$(LANG=$AUX_LANG LANGUAGE="$LANGUAGE" /usr/bin/xdg_translator "Groups_Share")"
+DATA_ALUM="$(LANG=$AUX_LANG LANGUAGE="$LANGUAGE" /usr/bin/xdg_translator "Data_Alum")"
 
 
 [ ! -z $DESKTOP_LOCALE ] || DESKTOP_LOCALE="Desktop"
@@ -148,8 +153,6 @@ DATA_ALUM="$(LANG=$AUX_LANG LANGUAGE=$LANGUAGE /usr/bin/xdg_translator "Data_Alu
 [ ! -z $SHARETEACHERS_LOCALE ] || SHARETEACHERS_LOCALE="Teachers_Share"
 [ ! -z $GROUPSSHARE_LOCALE ] || GROUPSSHARE_LOCALE="Groups_Share"
 [ ! -z $DATA_ALUM ] || DATA_ALUM="Data_Alumn"
-
-
 
 
 # Umount directories mounted previously
@@ -205,9 +208,9 @@ if [ -L "$HL_HOME/${DOCUMENTS_LOCALE}" ]; then
     mkdir $HL_HOME/${DOCUMENTS_LOCALE}
 fi
 
-
 chown $HL_USER:$GRP_USER $HL_HOME/${DOCUMENTS_LOCALE}
 echo "TOKEN_DOCUMENTS=\"$DOCUMENTS_LOCALE\"" >> $TEMP_NEW_USER_DIRS
+
 
 if [ "$TOKEN_DOWNLOADS" != "$DOWNLOADS_LOCALE" ]; then
     if [ ! -z "$TOKEN_DOWNLOADS" -a -e $HL_HOME/${TOKEN_DOWNLOADS} ]; then 
@@ -225,7 +228,7 @@ fi
 chown $HL_USER:$GRP_USER $HL_HOME/${DOWNLOADS_LOCALE}
 echo "TOKEN_DOWNLOADS=\"$DOWNLOADS_LOCALE\"" >> $TEMP_NEW_USER_DIRS
 
-if [ -d "/run/$HL_USER/home" -o -d "/net/server-sync/home/" ]; then 
+if [ -d "/run/$HL_USER/home" -o -d "/net/server-sync/home/" -a "$CDC_USER" = "0" ]; then 
     if [ "$TOKEN_SHARE" != "$SHARE_LOCALE" ]; then
 	    if [ ! -z "$TOKEN_SHARE" -a -e $HL_HOME/${TOKEN_SHARE} ]; then
 	        mv $HL_HOME/${TOKEN_SHARE} $HL_HOME/${SHARE_LOCALE}
@@ -256,42 +259,44 @@ if [ -d "/run/$HL_USER/home" -o -d "/net/server-sync/home/" ]; then
 
 	chown $HL_USER:$GRP_USER $HL_HOME/${SHARETEACHERS_LOCALE}
 	echo "TOKEN_SHARETEACHERS=\"$SHARETEACHERS_LOCALE\"" >> $TEMP_NEW_USER_DIRS
+	
+	if [ "$TOKEN_DATA_ALUM" != "$DATA_ALUM" ]; then
+                if [ ! -z "$TOKEN_DATA_ALUM" -a -e $HL_HOME/${TOKEN_DATA_ALUM} ]; then 
+                        mv $HL_HOME/${TOKEN_DATA_ALUM} $HL_HOME/${DATA_ALUM}
+                else
+                        mkdir $HL_HOME/${DATA_ALUM} || true
+                fi
+        fi
+	
+        if [ -L "$HL_HOME/${DATA_ALUM}" ]; then
+                rm -rf "$HL_HOME/${DATA_ALUM}"
+                mkdir "$HL_HOME/${DATA_ALUM}"
+        fi
+
+        chown $HL_USER:$GRP_USER $HL_HOME/${DATA_ALUM}
+        echo "TOKEN_DATA_ALUM=\"$DATA_ALUM\"" >> $TEMP_NEW_USER_DIRS	
+	
     fi
 fi
 
-if [ "$TOKEN_GROUPSSHARE" != "$GROUPSSHARE_LOCALE" ]; then
-    if [ ! -z "$TOKEN_GROUPSSHARE" -a -e $HL_HOME/${TOKEN_GROUPSSHARE} ]; then 
-        mv $HL_HOME/${TOKEN_GROUPSSHARE} $HL_HOME/${GROUPSSHARE_LOCALE}
-    else
-        mkdir $HL_HOME/${GROUPSSHARE_LOCALE} || true
-    fi
+if [ "$CDC_USER" = "0" ]; then
+
+	if [ "$TOKEN_GROUPSSHARE" != "$GROUPSSHARE_LOCALE" ]; then
+	    if [ ! -z "$TOKEN_GROUPSSHARE" -a -e $HL_HOME/${TOKEN_GROUPSSHARE} ]; then 
+		mv $HL_HOME/${TOKEN_GROUPSSHARE} $HL_HOME/${GROUPSSHARE_LOCALE}
+	    else
+		mkdir $HL_HOME/${GROUPSSHARE_LOCALE} || true
+	    fi
+	fi
+
+	if [ -L "$HL_HOME/${GROUPSSHARE_LOCALE}" ]; then
+	    rm -rf "$HL_HOME/${GROUPSSHARE_LOCALE}"
+	    mkdir "$HL_HOME/${GROUPSSHARE_LOCALE}"
+	fi
+	chown $HL_USER:$GRP_USER $HL_HOME/${GROUPSSHARE_LOCALE}
+	echo "TOKEN_GROUPSSHARE=\"$GROUPSSHARE_LOCALE\"" >> $TEMP_NEW_USER_DIRS
+
 fi
-
-if [ -L "$HL_HOME/${GROUPSSHARE_LOCALE}" ]; then
-    rm -rf "$HL_HOME/${GROUPSSHARE_LOCALE}"
-    mkdir "$HL_HOME/${GROUPSSHARE_LOCALE}"
-fi
-
-chown $HL_USER:$GRP_USER $HL_HOME/${GROUPSSHARE_LOCALE}
-echo "TOKEN_GROUPSSHARE=\"$GROUPSSHARE_LOCALE\"" >> $TEMP_NEW_USER_DIRS
-
-
-if [ "$TOKEN_DATA_ALUM" != "$DATA_ALUM" ]; then
-    if [ ! -z "$TOKEN_DATA_ALUM" -a -e $HL_HOME/${TOKEN_DATA_ALUM} ]; then 
-        mv $HL_HOME/${TOKEN_DATA_ALUM} $HL_HOME/${DATA_ALUM}
-    else
-        mkdir $HL_HOME/${DATA_ALUM} || true
-    fi
-fi
-
-if [ -L "$HL_HOME/${DATA_ALUM}" ]; then
-    rm -rf "$HL_HOME/${DATA_ALUM}"
-    mkdir "$HL_HOME/${DATA_ALUM}"
-fi
-
-chown $HL_USER:$GRP_USER $HL_HOME/${DATA_ALUM}
-echo "TOKEN_DATA_ALUM=\"$DATA_ALUM\"" >> $TEMP_NEW_USER_DIRS
-
 
 fix_owner_home "$HL_HOME" "$GRP_USER" "$HL_USER"
 
@@ -389,7 +394,13 @@ elif [ -d "/var/run/$HL_USER/home" ]; then
 fi
 mv ${TEMP_NEW_USER_DIRS} ${LAST_LOGIN_DIRECTORIES}
 
+if [ "$CDC_USER" = "1" ]; then
 
+	[ ! -e $HL_HOME/$SHARE_LOCALE ] || rm -r $HL_HOME/$SHARE_LOCALE 
+	[ ! -e $HL_HOME/$SHARETEACHERS_LOCALE ] || rm -r $HL_HOME/$SHARETEACHERS_LOCALE 
+	[ ! -e $HL_HOME/$GROUPSSHARE_LOCALE ] || rm -r $HL_HOME/$GROUPSSHARE_LOCALE 
+	[ ! -e $HL_HOME/$DATA_ALUM ] || rm -r $HL_HOME/$DATA_ALUM 
+fi
 cat > $USER_DIRS << EOF
 # This file is written by xdg-user-dirs-update
 # If you want to change or add directories, just edit the line you're
