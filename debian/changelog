@@ -1,3 +1,9 @@
+home-linker (0.87) bionic; urgency=medium
+
+  * Remove useless folders to CDC users 
+
+ -- Raul Rodrigo Segura <raurodse@gmail.com>  Mon, 09 Jan 2023 18:14:26 +0100
+
 home-linker (0.86) bionic; urgency=medium
 
   * Add support to CDC users 
