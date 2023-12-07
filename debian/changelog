@@ -1,3 +1,9 @@
+home-linker (0.101.23) jammy; urgency=medium
+
+  * Jammy release 
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Thu, 07 Dec 2023 09:04:32 +0100
+
 home-linker (0.101) focal; urgency=medium
 
   * Remove from CDC users useless folders
